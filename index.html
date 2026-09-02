@@ -31,7 +31,10 @@ body{
   font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;
 }
 .container{width:min(1180px,92%);margin:auto}
-nav{height:72px;display:flex;align-items:center;justify-content:space-between}
+nav{height:96px;display:grid;grid-template-columns:1fr minmax(420px,1.7fr) 1fr;align-items:center;gap:22px}
+.nav-title{margin:0;text-align:center;font-size:clamp(24px,3vw,42px);line-height:1;font-weight:950;letter-spacing:-2px;white-space:nowrap}
+.nav-title span{color:var(--accent)}
+.nav-cta{justify-self:end}
 .logo{font-size:27px;font-weight:950;letter-spacing:-1.5px}
 .logo span{color:var(--accent)}
 button{font:inherit}
@@ -55,7 +58,7 @@ h1{font-size:clamp(42px,7vw,76px);line-height:.96;letter-spacing:-4px;margin:20p
   grid-template-columns:1fr 1.22fr 1fr;
   grid-template-areas:"b2 b1 b3";
   gap:20px;
-  align-items:stretch;
+  align-items:end;
 }
 .featured-row .board[data-board="2"]{grid-area:b2}
 .featured-row .board[data-board="1"]{grid-area:b1}
@@ -208,6 +211,12 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);text-a
   .durations{grid-template-columns:1fr}
 }
 .all-categories-view{display:grid;gap:22px;margin-top:10px}.all-cat-section{border:1px solid var(--line);border-radius:20px;padding:18px;background:rgba(13,25,17,.7)}.all-cat-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.all-cat-name{font-size:18px;font-weight:950;color:var(--accent)}.all-cat-count{font-size:11px;color:var(--muted);font-weight:800}.all-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.all-ad-card{position:relative;min-height:150px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,#122218,#09130d);padding:12px;cursor:pointer;overflow:hidden}.all-ad-card:hover{border-color:#607d40}.all-ad-card .mini-top{display:flex;justify-content:space-between;gap:8px;font-size:10px;font-weight:900}.all-ad-card .mini-plus{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:34px;color:var(--accent)}.all-ad-card .mini-days{position:absolute;right:10px;bottom:9px;font-size:10px;color:var(--muted);font-weight:900}@media(max-width:800px){.all-cat-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:430px){.all-cat-grid{grid-template-columns:1fr}}
+
+.legal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(7px);z-index:9999;display:none;overflow:auto;padding:24px 14px}
+.legal-overlay.show{display:block}
+.legal-box{max-width:980px;margin:30px auto;background:#0b1710;border:1px solid var(--line);border-radius:20px;padding:28px;color:var(--text);box-shadow:0 20px 80px rgba(0,0,0,.5)}
+.legal-box h1{margin:0 0 8px;font-size:30px}.legal-box h2{margin-top:26px;font-size:20px}.legal-box p,.legal-box li{line-height:1.7;color:#cbd7ce}.legal-close{float:right;background:transparent;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:7px 12px;cursor:pointer;font-size:20px}.legal-note{font-size:12px;color:var(--muted)}
+
 </style>
 
 <style>
@@ -226,21 +235,150 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);text-a
 .category-filter{min-width:250px;border:1px solid #4b6548;background:#0b1710;color:var(--text);border-radius:12px;padding:12px 14px;font-weight:800;outline:none;cursor:pointer}
 .category-view-title{text-align:center;color:var(--accent);font-size:14px;font-weight:900;letter-spacing:.4px;margin:0 0 18px}
 .board-free{display:inline-flex;align-items:center;justify-content:center;margin:0 auto 10px;padding:5px 10px;border:1px solid #4e6b3f;border-radius:999px;color:var(--accent);font-size:10px;font-weight:950}
-@media(max-width:700px){.board-filter{align-items:stretch;flex-direction:column}.category-filter{width:100%;min-width:0}.category-view-title{font-size:12px}}
+@media(max-width:700px){
+  nav{height:auto;grid-template-columns:1fr;gap:12px;padding-top:18px}
+  .nav-title{white-space:normal;font-size:28px;letter-spacing:-1.2px;line-height:1.05}
+  .nav-cta{justify-self:center}
+.board-filter{align-items:stretch;flex-direction:column}.category-filter{width:100%;min-width:0}.category-view-title{font-size:12px}}
 </style>
+
+<style id="v31-height-only">
+/* V31: reduce HEIGHT only; keep the original V29 widths */
+.featured-row .board:nth-child(1),
+.featured-row .board:nth-child(3){
+  height: calc(var(--featured-height, 270px) * .6667) !important;
+}
+.featured-row .board:nth-child(2){
+  height: calc(var(--hero-height, 360px) * .6667) !important;
+}
+.more-boards .board{
+  min-height: 80px !important;
+  height: 80px !important;
+}
+@media(max-width:800px){
+  .featured-row .board:nth-child(1),
+  .featured-row .board:nth-child(3){
+    height: 130px !important;
+  }
+  .featured-row .board:nth-child(2){
+    height: 160px !important;
+  }
+  .more-boards .board{
+    min-height: 75px !important;
+    height: 75px !important;
+  }
+}
+@media(max-width:520px){
+  .featured-row .board:nth-child(1),
+  .featured-row .board:nth-child(3){
+    height: 100px !important;
+  }
+  .featured-row .board:nth-child(2){
+    height: 120px !important;
+  }
+  .more-boards .board{
+    min-height: 65px !important;
+    height: 65px !important;
+  }
+}
+</style>
+
+
+<style id="v32-mobile-claim-fix">
+/* V32: mobile boards get more height so the Claim Board button is fully visible */
+@media(max-width:800px){
+  .featured-row .board:nth-child(1),
+  .featured-row .board:nth-child(3){
+    height:180px !important;
+    min-height:180px !important;
+  }
+  .featured-row .board:nth-child(2){
+    height:220px !important;
+    min-height:220px !important;
+  }
+  .more-boards .board{
+    height:140px !important;
+    min-height:140px !important;
+  }
+  .more-boards .board .claim{
+    height:42px !important;
+    min-height:42px !important;
+    flex:0 0 42px !important;
+    display:block !important;
+    visibility:visible !important;
+    position:relative !important;
+    z-index:30 !important;
+    margin-top:auto !important;
+  }
+}
+@media(max-width:520px){
+  .featured-row .board:nth-child(1),
+  .featured-row .board:nth-child(3){
+    height:165px !important;
+    min-height:165px !important;
+  }
+  .featured-row .board:nth-child(2){
+    height:200px !important;
+    min-height:200px !important;
+  }
+  .more-boards .board{
+    height:125px !important;
+    min-height:125px !important;
+  }
+}
+</style>
+
+
+<style id="v33-clean-hero">
+.hero{
+  padding-top:18px !important;
+  padding-bottom:28px !important;
+}
+.hero .badge{
+  margin-top:0 !important;
+}
+@media(max-width:800px){
+  nav{padding-bottom:8px !important;}
+  .hero{
+    padding-top:8px !important;
+    padding-bottom:22px !important;
+  }
+}
+</style>
+
+
+<style id="v34-x-share">
+.x-share-btn{
+  margin-left:10px;
+  border:1px solid var(--line);
+  background:rgba(15,28,19,.9);
+  color:var(--text);
+  border-radius:12px;
+  padding:12px 18px;
+  font-weight:900;
+  cursor:pointer;
+}
+.x-share-btn:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:520px){
+  .x-share-btn{
+    display:block;
+    width:100%;
+    margin:10px 0 0;
+  }
+}
+</style>
+
 </head>
 <body>
 
 <div class="container">
 <nav>
   <div class="logo">Ad<span>Board</span></div>
-  <button class="primary" onclick="openAd(1)">Claim Advertisement Board</button>
+  <h1 class="nav-title">Get your product in a <span>premium spot.</span></h1>
 </nav>
 
 <section class="hero">
   <div class="badge">ADVERTISEMENT MARKETPLACE</div>
-  <h1>Get your product in a<br><span style="color:var(--accent)">premium spot.</span></h1>
-  <p>Choose an Advertisement Board and keep your product featured for 10, 20 or 30 days.</p>
   <button class="primary" onclick="document.getElementById('boards').scrollIntoView()">Explore Advertisement Boards ↓</button>
 </section>
 
@@ -252,6 +390,35 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);text-a
     </div>
     <select id="boardCategoryFilter" class="category-filter" onchange="changeBoardCategory(this.value)">
       <option value="ALL">All Categories</option>
+      <option value="X">X</option>
+      <option value="Instagram">Instagram</option>
+      <option value="Facebook">Facebook</option>
+      <option value="YouTube">YouTube</option>
+      <option value="School">School</option>
+      <option value="Hospital">Hospital</option>
+      <option value="Website">Website</option>
+      <option value="App">App</option>
+      <option value="E-commerce">E-commerce</option>
+      <option value="Restaurant">Restaurant</option>
+      <option value="Hotel">Hotel</option>
+      <option value="Business">Business</option>
+      <option value="Education">Education</option>
+      <option value="Software / SaaS">Software / SaaS</option>
+      <option value="Local Business">Local Business</option>
+      <option value="Real Estate">Real Estate</option>
+      <option value="Automobile">Automobile</option>
+      <option value="Jobs / Career">Jobs / Career</option>
+      <option value="Gaming">Gaming</option>
+      <option value="Music">Music</option>
+      <option value="Entertainment">Entertainment</option>
+      <option value="News / Media">News / Media</option>
+      <option value="Courses">Courses</option>
+      <option value="Fitness">Fitness</option>
+      <option value="Beauty">Beauty</option>
+      <option value="Fashion">Fashion</option>
+      <option value="Services">Services</option>
+      <option value="Startup">Startup</option>
+      <option value="Other">Other</option>
     </select>
   </div>
   <div id="categoryViewTitle" class="category-view-title">All Categories · 100 Advertisement Boards</div>
@@ -1363,7 +1530,15 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);text-a
   </div>
 </section>
 
-<footer>© 2026 AdBoard · Advertisement marketplace<a href="#terms" onclick="showLegal(event,'terms')">Terms &amp; Conditions</a> &nbsp;|&nbsp; <a href="#privacy" onclick="showLegal(event,'privacy')">Privacy Policy</a> &nbsp;|&nbsp; <a href="#refund" onclick="showLegal(event,'refund')">Refund &amp; Cancellation Policy</a></footer>
+<footer>© 2026 AdBoard · Free Launch Advertisement Marketplace · <a href="#terms" onclick="showLegal(event,'terms')">Terms &amp; Conditions</a> &nbsp;|&nbsp; <a href="#privacy" onclick="showLegal(event,'privacy')">Privacy Policy</a> &nbsp;|&nbsp; <a href="#refund" onclick="showLegal(event,'refund')">Refund &amp; Cancellation Policy</a></footer>
+
+<div class="legal-overlay" id="legalOverlay">
+  <div class="legal-box">
+    <button class="legal-close" onclick="closeLegal()" aria-label="Close">×</button>
+    <div id="legalContent"></div>
+  </div>
+</div>
+
 
 <div class="modal" id="adModal">
   <div class="modal-box">
@@ -1589,7 +1764,10 @@ function submitAd(){
 }
 function initCategoryFilter(){
   const select=document.getElementById("boardCategoryFilter");
-  categories.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;select.appendChild(o);});
+  if(!select) return;
+  if(select.options.length <= 1){
+    categories.forEach(c=>{const o=document.createElement("option");o.value=c;o.textContent=c;select.appendChild(o);});
+  }
   select.value="ALL";
 }
 
@@ -1600,4 +1778,75 @@ function shareOnX(){
   const intent = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(pageUrl);
   window.open(intent, "_blank", "noopener,noreferrer");
 }
+
+const legalPages = {
+  terms: `
+    <h1>Terms &amp; Conditions</h1>
+    <p class="legal-note">Last updated: 2 September 2026</p>
+    <p>Welcome to AdBoard, an online advertisement marketplace where users can submit a product or business name, a destination link, and a category to claim an advertisement board.</p>
+    <h2>1. Free Launch</h2>
+    <p>During the current Free Launch, eligible advertisement boards can be claimed without payment. AdBoard may introduce paid placements or other commercial plans in the future. Any future paid service will be governed by the pricing and terms shown at the time of purchase.</p>
+    <h2>2. Advertisement Responsibility</h2>
+    <p>You are responsible for the accuracy, legality, and ownership or authorization of the content and destination URL you submit. Do not submit content that is unlawful, fraudulent, misleading, infringing, abusive, harmful, or otherwise prohibited by applicable law.</p>
+    <h2>3. Destination Links</h2>
+    <p>Claimed advertisement areas may open the destination URL supplied by the advertiser. AdBoard does not own or control third-party websites and is not responsible for their content, products, services, security, availability, or policies.</p>
+    <h2>4. Board Ranking &amp; Rotation</h2>
+    <p>Advertisement boards are ranked positions, not a guarantee of traffic, sales, impressions, clicks, search ranking, or business results. During the current model, claimed advertisements are subject to an automatic 3-day rotation. Category-specific rotation removes the top one-third of active advertisements, subject to the site's protected Board #1 rules, and surviving advertisements move upward.</p>
+    <h2>5. Protected Boards</h2>
+    <p>Under the current implementation, Board #1 is protected for Software / SaaS and Gaming. The All Categories view is a combined display and does not create a separate paid or independently claimable Board #1.</p>
+    <h2>6. Removal &amp; Suspension</h2>
+    <p>AdBoard may remove or disable an advertisement that violates these terms, applicable law, or the integrity of the marketplace. We may also modify, suspend, or discontinue features of the service.</p>
+    <h2>7. No Guarantee</h2>
+    <p>AdBoard is provided on an “as available” basis during the prototype/free-launch stage. We do not guarantee uninterrupted availability, permanent storage, traffic levels, or advertising performance.</p>
+    <h2>8. Acceptance</h2>
+    <p>By claiming or using an advertisement board, you agree to these Terms &amp; Conditions.</p>
+    <p class="legal-note">This page is a general website draft and is not legal advice. Before public commercial launch, have the terms reviewed for your business and jurisdiction.</p>
+  `,
+  privacy: `
+    <h1>Privacy Policy</h1>
+    <p class="legal-note">Last updated: 2 September 2026</p>
+    <p>AdBoard is currently a browser-based prototype/free-launch marketplace. The information you enter into a claim form is used to display and operate the advertisement board.</p>
+    <h2>1. Information You Provide</h2>
+    <p>The current claim form may collect a product or business name, destination URL, category, and claim timestamp. Do not submit sensitive personal information into an advertisement field.</p>
+    <h2>2. Local Storage</h2>
+    <p>In the current prototype, advertisement claim data is stored in the browser's local storage. This means data can be limited to the browser/device being used and can be lost if browser storage is cleared. The current prototype is not a substitute for a production database.</p>
+    <h2>3. Third-Party Websites</h2>
+    <p>When an advertisement is clicked, users may be sent to a third-party destination supplied by the advertiser. Those websites have their own privacy policies and practices, which AdBoard does not control.</p>
+    <h2>4. Future Changes</h2>
+    <p>If AdBoard adds accounts, analytics, payments, cookies, a production database, or other data-processing features, this Privacy Policy should be updated before those features are used publicly.</p>
+    <h2>5. Contact</h2>
+    <p>Before commercial launch, this section should be updated with the official AdBoard operator name, support email, and applicable business address.</p>
+    <p class="legal-note">This page is a general website draft and is not legal advice.</p>
+  `,
+  refund: `
+    <h1>Refund &amp; Cancellation Policy</h1>
+    <p class="legal-note">Last updated: 2 September 2026</p>
+    <h2>1. Current Free Launch</h2>
+    <p>All advertisement board claims in the current Free Launch are free. Because no payment is collected for these claims, there is no payment to refund.</p>
+    <h2>2. Voluntary Removal</h2>
+    <p>If you no longer want your advertisement displayed, you may stop using the claim in the current prototype. The current local-storage implementation does not provide a central account-based cancellation system.</p>
+    <h2>3. Future Paid Services</h2>
+    <p>If paid advertisement placements are introduced, the applicable price, placement duration, cancellation rules, refund eligibility, and payment-provider terms will be shown before payment is completed and will supersede this general Free Launch wording where applicable.</p>
+    <h2>4. Incorrect or Prohibited Advertisements</h2>
+    <p>AdBoard may remove advertisements that violate the Terms &amp; Conditions or applicable law. Any future refund treatment for paid placements will be governed by the paid-service refund terms displayed at the time of purchase.</p>
+    <p class="legal-note">This page is a general website draft and is not legal advice.</p>
+  `
+};
+
+function showLegal(event, type){
+  if(event) event.preventDefault();
+  const content = legalPages[type];
+  if(!content) return;
+  document.getElementById("legalContent").innerHTML = content;
+  document.getElementById("legalOverlay").classList.add("show");
+  document.body.style.overflow="hidden";
+}
+function closeLegal(){
+  document.getElementById("legalOverlay").classList.remove("show");
+  document.body.style.overflow="";
+}
+
+
+initCategoryFilter();
+renderCurrentCategory();
 </script>
