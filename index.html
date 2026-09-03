@@ -2407,10 +2407,21 @@ function resetBoard(board){
   const days = board.querySelector(".ad-days");
   const zone = board.querySelector(".ad-zone");
   const btn = board.querySelector(".claim");
+
+  // Completely clear the previous category/view from this board.
   if(cat) cat.textContent = "";
   if(days) days.textContent = "";
-  if(zone){ zone.title = ""; zone.onclick = null; }
-  if(btn){ btn.textContent = `Claim Board ${board.dataset.board}`; btn.disabled = false; }
+  if(zone){
+    zone.querySelectorAll(".ad-website-preview,.ad-preview-shade,.ad-content").forEach(el => el.remove());
+    zone.title = "";
+    zone.onclick = null;
+    const plus = zone.querySelector(".ad-plus");
+    if(plus) plus.style.display = "";
+  }
+  if(btn){
+    btn.textContent = `Claim Board ${board.dataset.board}`;
+    btn.disabled = false;
+  }
 }
 function setBoardActive(n, ad){
   const board = document.querySelector(`[data-board="${n}"]`);
