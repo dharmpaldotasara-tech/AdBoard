@@ -825,6 +825,50 @@ body.dark-mode .dark-mode-toggle{
   border-color:#8064b7 !important;
 }
 
+
+/* ===== Live Website/Homepage Preview Inside Active Boards ===== */
+.ad-zone{
+  position:relative !important;
+  overflow:hidden !important;
+}
+.ad-website-preview{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  display:block;
+  pointer-events:none;
+  background:#fffaf0;
+  z-index:1;
+  opacity:.96;
+}
+.ad-preview-shade{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:linear-gradient(to bottom,rgba(255,250,240,.04),rgba(255,250,240,.10));
+}
+.ad-content{
+  z-index:3 !important;
+  background:rgba(255,250,240,.88);
+  border:1px solid rgba(203,185,232,.75);
+  border-radius:14px;
+  padding:10px 14px;
+  left:10%;
+  right:10%;
+  width:auto;
+  box-sizing:border-box;
+  box-shadow:0 8px 25px rgba(72,48,110,.12);
+}
+.board.active .ad-website-preview{
+  display:block;
+}
+.board.active .ad-preview-shade{
+  display:block;
+}
+
 </style>
 </head>
 <body>
@@ -2357,6 +2401,7 @@ function setBoardActive(n, ad){
   const board = document.querySelector(`[data-board="${n}"]`);
   if(!board) return;
   board.classList.add("active");
+
   const catEl = board.querySelector(".board-category");
   if(catEl) catEl.textContent = ad.category || "ACTIVE";
 
@@ -2367,18 +2412,33 @@ function setBoardActive(n, ad){
 
   const zone = board.querySelector(".ad-zone");
   const url = adUrl(ad);
+
   if(zone){
-    const oldContent = zone.querySelector(".ad-content");
-    if(oldContent) oldContent.remove();
+    zone.querySelectorAll(".ad-website-preview,.ad-preview-shade,.ad-content").forEach(el => el.remove());
+
+    const iframe = document.createElement("iframe");
+    iframe.className = "ad-website-preview";
+    iframe.src = url || "about:blank";
+    iframe.loading = "lazy";
+    iframe.setAttribute("title", `Preview of ${displayAdLabel(ad)}`);
+    iframe.setAttribute("sandbox", "allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts");
+    zone.appendChild(iframe);
+
+    const shade = document.createElement("div");
+    shade.className = "ad-preview-shade";
+    zone.appendChild(shade);
 
     const content = document.createElement("div");
     content.className = "ad-content";
+
     const name = document.createElement("div");
     name.className = "ad-product-name";
     name.textContent = displayAdLabel(ad);
+
     const link = document.createElement("div");
     link.className = "ad-product-url";
     link.textContent = destinationLabel;
+
     content.appendChild(name);
     if(destinationLabel) content.appendChild(link);
     zone.appendChild(content);
@@ -2388,7 +2448,12 @@ function setBoardActive(n, ad){
 
     zone.title = `Open ${displayAdLabel(ad)}`;
     zone.onclick = () => openDestination(url);
+
+    iframe.addEventListener("error", () => {
+      iframe.style.display = "none";
+    });
   }
+
   const btn = board.querySelector(".claim");
   if(btn){ btn.textContent = "Advertisement Active"; btn.disabled = true; }
 }
