@@ -142,7 +142,7 @@ button{font:inherit}
 }
 .ad-content{
   position:absolute;left:14px;right:14px;top:50%;transform:translateY(-50%);
-  z-index:2;text-align:center;pointer-events:none;
+  z-index:4;text-align:center;pointer-events:auto;
 }
 .ad-product-name{
   font-size:clamp(18px,2.2vw,30px);font-weight:950;color:#1d2418;
@@ -152,6 +152,12 @@ button{font:inherit}
   margin-top:7px;font-size:12px;font-weight:800;color:#b9c9bc;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
+.ad-click-link{
+  display:block;text-decoration:none;cursor:pointer;pointer-events:auto;
+}
+.ad-click-link:hover{text-decoration:underline}
+.ad-product-name.ad-click-link{color:inherit}
+.ad-product-url.ad-click-link{color:inherit}
 .board.active .ad-product-name{color:var(--accent)}
 .board.active .ad-product-url{color:#dce8df}
 .ad-days{
@@ -2206,6 +2212,7 @@ const boardPricing = {"1":[2100,3500,4100],"2":[1900,3300,3900],"3":[1600,3000,3
 let currentBoard = 1;
 let currentCategory = "";
 let selectedViewCategory = "ALL";
+let viewBoardMap = new Map();
 const categories = ['X', 'Instagram', 'Facebook', 'YouTube', 'School', 'Hospital', 'Website', 'App', 'E-commerce', 'Restaurant', 'Hotel', 'Business', 'Education', 'Software / SaaS', 'Local Business', 'Real Estate', 'Automobile', 'Jobs / Career', 'Gaming', 'Music', 'Entertainment', 'News / Media', 'Courses', 'Fitness', 'Beauty', 'Fashion', 'Services', 'Startup', 'Other'];
 
 const SUPABASE_URL = "https://tbgwpkoccupepkvbqebs.supabase.co";
@@ -2348,16 +2355,24 @@ function showSupabaseError(e){
 }
 
 function openAd(n){
-  currentBoard = n;
-  document.getElementById("selectedBoard").textContent = n;
+  const displayBoard = Number(n);
+  currentBoard = displayBoard;
+
+  // In a filtered category view, active ads may have been compacted to Board 1,
+  // Board 2, ... even when their database board number is different. When a
+  // user clicks an empty visual board, let them choose the category and claim
+  // the first genuinely available board in that category.
+  const mapped = viewBoardMap.get(displayBoard);
+  if(mapped && mapped.mode === "active") return;
+
+  document.getElementById("selectedBoard").textContent = displayBoard;
   document.getElementById("notice").style.display = "none";
   document.getElementById("productName").value = "";
   document.getElementById("productUrl").value = "";
   document.getElementById("productHandle").value = "";
+
   currentCategory = selectedViewCategory !== "ALL" ? selectedViewCategory : "";
-  if(selectedViewCategory === "ALL" && n === 1) currentCategory = "__MAIN__";
-  document.getElementById("chosenCategory").textContent =
-    currentCategory === "__MAIN__" ? "Main Homepage · Permanent" : (currentCategory || "Choose a Category");
+  document.getElementById("chosenCategory").textContent = currentCategory || "Choose a Category";
   document.getElementById("adModal").classList.add("show");
 }
 function closeAll(){
@@ -2431,15 +2446,23 @@ function setBoardActive(n, ad){
     const content = document.createElement("div");
     content.className = "ad-content";
 
-    const name = document.createElement("div");
-    name.className = "ad-product-name";
-    name.textContent = displayAdLabel(ad);
+    const nameLink = document.createElement("a");
+    nameLink.className = "ad-product-name ad-click-link";
+    nameLink.textContent = displayAdLabel(ad);
+    nameLink.href = url || "#";
+    nameLink.target = "_blank";
+    nameLink.rel = "noopener noreferrer";
+    nameLink.addEventListener("click", (event) => event.stopPropagation());
 
-    const link = document.createElement("div");
-    link.className = "ad-product-url";
+    const link = document.createElement("a");
+    link.className = "ad-product-url ad-click-link";
     link.textContent = destinationLabel;
+    link.href = url || "#";
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.addEventListener("click", (event) => event.stopPropagation());
 
-    content.appendChild(name);
+    content.appendChild(nameLink);
     if(destinationLabel) content.appendChild(link);
     zone.appendChild(content);
 
@@ -2457,26 +2480,83 @@ function setBoardActive(n, ad){
   const btn = board.querySelector(".claim");
   if(btn){ btn.textContent = "Advertisement Active"; btn.disabled = true; }
 }
+function getCategoryAds(category){
+  const ads = [];
+  for(let n = 1; n <= 100; n++){
+    const ad = getAd(category, n);
+    if(ad) ads.push({actualBoard:n, ad});
+  }
+  return ads;
+}
+
+function getAllActiveCategoryAds(){
+  const all = [];
+  categories.forEach(category => {
+    getCategoryAds(category).forEach(item => {
+      all.push({category, actualBoard:item.actualBoard, ad:item.ad});
+    });
+  });
+  return all;
+}
+
 function renderCurrentCategory(){
   const boards = [...document.querySelectorAll(".board[data-board]")];
   boards.forEach(resetBoard);
+  viewBoardMap = new Map();
+
   const physical = document.getElementById("boardsPhysicalView");
   const allView = document.getElementById("allCategoriesView");
+  if(physical) physical.style.display = "block";
+  if(allView) allView.style.display = "none";
+
   if(selectedViewCategory === "ALL"){
-    if(physical) physical.style.display = "block";
-    if(allView) allView.style.display = "grid";
-    const mainAd = getMainBoard1();
-    if(mainAd) setBoardActive(1, mainAd);
-    renderAllCategories();
+    // ALL CATEGORIES = one combined marketplace. Every active ad from every
+    // category is packed into the visible boards from Board 1 onward.
+    const activeAds = getAllActiveCategoryAds();
+    activeAds.slice(0, 100).forEach((item, index) => {
+      const displayBoard = index + 1;
+      viewBoardMap.set(displayBoard, {
+        mode: "active",
+        category: item.category,
+        actualBoard: item.actualBoard,
+        ad: item.ad
+      });
+      setBoardActive(displayBoard, item.ad);
+      const cat = document.querySelector(`[data-board="${displayBoard}"] .board-category`);
+      if(cat) cat.textContent = item.category;
+    });
+
+    // The remaining visible boards are claimable. A visual board maps to the
+    // lowest unused board number in its selected category after a category is
+    // chosen in the claim modal.
+    boards.forEach(board => {
+      const n = Number(board.dataset.board);
+      if(!viewBoardMap.has(n)){
+        viewBoardMap.set(n, {mode:"empty"});
+      }
+    });
   } else {
-    if(physical) physical.style.display = "block";
-    if(allView) allView.style.display = "none";
-    boards.forEach(b => {
-      const n = Number(b.dataset.board);
-      const ad = getAd(selectedViewCategory, n);
-      if(ad) setBoardActive(n, ad);
+    // CATEGORY VIEW = show that category's active ads packed from Board 1.
+    // Example: X's database Board 2 appears visually as Board 1 here.
+    const activeAds = getCategoryAds(selectedViewCategory);
+    activeAds.forEach((item, index) => {
+      const displayBoard = index + 1;
+      viewBoardMap.set(displayBoard, {
+        mode: "active",
+        category: selectedViewCategory,
+        actualBoard: item.actualBoard,
+        ad: item.ad
+      });
+      setBoardActive(displayBoard, item.ad);
+      const cat = document.querySelector(`[data-board="${displayBoard}"] .board-category`);
+      if(cat) cat.textContent = selectedViewCategory;
+    });
+    boards.forEach(board => {
+      const n = Number(board.dataset.board);
+      if(!viewBoardMap.has(n)) viewBoardMap.set(n, {mode:"empty"});
     });
   }
+
   const title = document.getElementById("categoryViewTitle");
   if(title) title.textContent = selectedViewCategory === "ALL"
     ? "All Categories · 100 Advertisement Boards"
@@ -2484,56 +2564,13 @@ function renderCurrentCategory(){
   const filter = document.getElementById("boardCategoryFilter");
   if(filter) filter.value = selectedViewCategory;
 }
+
 function renderAllCategories(){
-  const box = document.getElementById("allCategoriesView");
-  if(!box) return;
-  box.innerHTML = "";
-  let total = 0;
-  const mainAd = getMainBoard1();
-  if(mainAd){
-    const mainSection = document.createElement("section");
-    mainSection.className = "all-cat-section";
-    const handle = displayHandle(mainAd);
-    mainSection.innerHTML = `<div class="all-cat-head">
-      <div class="all-cat-name">Main Homepage · Board 1</div>
-      <div class="all-cat-count">PERMANENT</div>
-    </div><div class="all-cat-grid"></div>`;
-    const grid = mainSection.querySelector(".all-cat-grid");
-    const card = document.createElement("div");
-    card.className = "all-ad-card";
-    card.innerHTML = `<div class="mini-top"><span>BOARD 1</span><span>PERMANENT</span></div>
-      <div class="mini-plus">＋</div><div class="mini-days">${handle || "PERMANENT"}</div>`;
-    card.onclick = () => openDestination(adUrl(mainAd));
-    grid.appendChild(card);
-    box.appendChild(mainSection);
-  }
-  categories.forEach(c => {
-    const ads = [];
-    for(let n = 1; n <= 100; n++){
-      const ad = getAd(c, n);
-      if(ad) ads.push({board:n, ad});
-    }
-    if(!ads.length) return;
-    total += ads.length;
-    const section = document.createElement("section");
-    section.className = "all-cat-section";
-    section.innerHTML = `<div class="all-cat-head"><div class="all-cat-name">${c}</div><div class="all-cat-count">${ads.length} active advertisement${ads.length===1?"":"s"}</div></div><div class="all-cat-grid"></div>`;
-    const grid = section.querySelector(".all-cat-grid");
-    ads.forEach(({board, ad}) => {
-      const card = document.createElement("div");
-      card.className = "all-ad-card";
-      const handle = displayHandle(ad);
-      card.innerHTML = `<div class="mini-top"><span>BOARD ${board}</span><span>${c}</span></div><div class="mini-plus">＋</div><div class="mini-days">${handle || "ACTIVE"}</div>`;
-      card.title = handle || "Open advertisement";
-      card.onclick = () => openDestination(adUrl(ad));
-      grid.appendChild(card);
-    });
-    box.appendChild(section);
-  });
-  if(!total && !mainAd){
-    box.innerHTML = '<div class="all-cat-section" style="text-align:center;color:var(--muted);padding:45px 20px"><div style="font-size:22px;font-weight:950;color:var(--text);margin-bottom:8px">No advertisements yet</div><div>Choose any category and claim a free board to appear here.</div></div>';
-  }
+  // Kept for backward compatibility with older calls. The ALL view is now
+  // rendered directly in the same 100-board marketplace as category views.
+  renderCurrentCategory();
 }
+
 function changeBoardCategory(c){
   selectedViewCategory = c;
   renderCurrentCategory();
@@ -2562,18 +2599,24 @@ async function submitAd(){
   }
   if(!supabaseClient){ showSupabaseConfigWarning(); return; }
   notice.style.display = "none";
-  const isMainPermanent = (currentCategory === "__MAIN__" && currentBoard === 1);
   try{
-    const result = isMainPermanent
-      ? await supabaseClient.rpc("claim_main_board1", {p_product_name:name, p_destination_url:resolved.url})
-      : await supabaseClient.rpc("claim_ad", {p_category:currentCategory, p_board_number:Number(currentBoard), p_product_name:name, p_destination_url:resolved.url});
+    // Display boards are compacted views. Always claim the lowest free
+    // database board in the chosen category so a filtered view never tries
+    // to overwrite an existing ad that was originally on Board 2, 3, etc.
+    let targetBoard = 1;
+    const usedBoards = new Set(getCategoryAds(currentCategory).map(x => x.actualBoard));
+    while(usedBoards.has(targetBoard) && targetBoard <= 100) targetBoard++;
+    if(targetBoard > 100){
+      notice.textContent = `All 100 boards in ${currentCategory} are already active.`;
+      notice.style.display = "block";
+      return;
+    }
+    const result = await supabaseClient.rpc("claim_ad", {p_category:currentCategory, p_board_number:targetBoard, p_product_name:name, p_destination_url:resolved.url});
     if(result.error) throw result.error;
     await loadAdsFromSupabase();
-    selectedViewCategory = isMainPermanent ? "ALL" : currentCategory;
+    selectedViewCategory = currentCategory;
     renderCurrentCategory();
-    notice.textContent = isMainPermanent
-      ? "Main Homepage Board 1 is now active permanently. It will not be removed by the 3-day rotation."
-      : `Board ${currentBoard} is FREE and active in ${currentCategory}. Every 3 days, the top 1/3 of claimed boards will rotate out and lower ads will move up automatically.`;
+    notice.textContent = `Advertisement is now active in ${currentCategory}. It appears at the next available position in that category and in the combined All Categories view.`;
     notice.style.display = "block";
   }catch(e){
     console.error("AdBoard claim error:", e);
