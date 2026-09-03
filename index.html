@@ -587,6 +587,244 @@ button:focus{
   border-color:#cbb9e8 !important;
 }
 
+
+/* ===== FINAL CREAM + LAVENDER VISIBILITY FIX ===== */
+html,body{
+  background:#fbf6e8 !important;
+  color:#171b12 !important;
+}
+body{
+  background:
+    radial-gradient(circle at 50% -10%,#eee5ff 0,#fbf6e8 48%,#fbf6e8 100%) !important;
+}
+.modal{
+  background:rgba(38,28,55,.42) !important;
+  backdrop-filter:blur(5px);
+}
+.modal-box{
+  background:#f7f0ff !important;
+  color:#171b12 !important;
+  border:2px solid #cbb3fa !important;
+  box-shadow:0 25px 80px rgba(53,35,82,.28) !important;
+}
+.modal-box h2,
+.modal-box label{
+  color:#171b12 !important;
+}
+.modal-box .badge{
+  background:#d4c0ff !important;
+  color:#4c2490 !important;
+  border-color:#bfa0ff !important;
+}
+.modal-box .close{
+  color:#6338b8 !important;
+}
+.modal-box input,
+.modal-box .category-select{
+  background:#fffaf0 !important;
+  color:#171b12 !important;
+  border:1px solid #cbb3fa !important;
+}
+.modal-box input::placeholder{
+  color:#77728a !important;
+}
+.modal-box .primary{
+  background:#d4c0ff !important;
+  color:#2b1758 !important;
+  border:1px solid #bfa0ff !important;
+}
+/* All board cards: no black/dark board surfaces */
+.board{
+  background:#e7dcff !important;
+  color:#171b12 !important;
+  border:1px solid #c4a8ff !important;
+  box-shadow:0 12px 35px rgba(72,48,110,.13) !important;
+}
+.featured-row .board[data-board="1"]{
+  background:#e7dcff !important;
+  border-color:#bfa0ff !important;
+  box-shadow:0 0 0 1px rgba(191,160,255,.30),0 20px 55px rgba(72,48,110,.16) !important;
+}
+.board::before{
+  background:rgba(191,160,255,.22) !important;
+}
+.board-top,
+.board-number{
+  color:#171b12 !important;
+}
+.board-label{
+  color:#5d5572 !important;
+}
+.ad-zone{
+  background:#fffaf0 !important;
+  border-color:#cbb9e8 !important;
+  color:#171b12 !important;
+}
+.ad-category{
+  color:#6338b8 !important;
+}
+.ad-plus{
+  color:#7756a9 !important;
+}
+.board.active .ad-plus,
+.board.active .ad-category,
+.board.active .ad-days{
+  color:#6338b8 !important;
+}
+.ad-product-name{
+  color:#171b12 !important;
+}
+.ad-product-url{
+  color:#665b78 !important;
+}
+.claim{
+  background:#d4c0ff !important;
+  color:#2b1758 !important;
+  border-color:#bfa0ff !important;
+}
+.board.active .claim{
+  background:#d4c0ff !important;
+  color:#2b1758 !important;
+}
+/* Category / marketplace area */
+.board-filter,
+.browse,
+.browse-section,
+.category-browser,
+.category-header,
+.category-panel{
+  background:#e7dcff !important;
+  color:#171b12 !important;
+  border-color:#c4a8ff !important;
+}
+.board-filter *,
+.browse *,
+.category-header *{
+  color:inherit;
+}
+.category-filter,
+.board-filter select,
+.browse select,
+select{
+  background:#fffaf0 !important;
+  color:#171b12 !important;
+  border-color:#cbb3fa !important;
+}
+.badge,
+.marketplace-label,
+.marketplace-badge,
+.advertisement-marketplace,
+.hero-badge{
+  background:#d4c0ff !important;
+  color:#4c2490 !important;
+  border-color:#bfa0ff !important;
+}
+.logo span,
+.nav-title span,
+.category-view-title{
+  color:#6338b8 !important;
+}
+.x-share-btn{
+  background:#e7dcff !important;
+  color:#2b1758 !important;
+  border-color:#c4a8ff !important;
+}
+
+
+/* ===== Dark Mode Toggle ===== */
+.dark-mode-toggle{
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin-left:10px;
+  min-height:42px;
+  padding:10px 16px;
+  border-radius:999px;
+  border:1px solid #c4a8ff !important;
+  background:#e7dcff !important;
+  color:#2b1758 !important;
+  font-weight:850;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.dark-mode-toggle:hover{
+  background:#d4c0ff !important;
+  transform:translateY(-1px);
+}
+body.dark-mode{
+  --cream-bg:#111318;
+  --cream-panel:#191c23;
+  --cream-panel-2:#20242c;
+  --cream-border:#3b4050;
+  --ink:#f4f1ea;
+  --muted:#b9b4a9;
+  background:#111318 !important;
+  color:#f4f1ea !important;
+}
+body.dark-mode{
+  background:
+    radial-gradient(circle at 50% -10%,rgba(212,192,255,.16),transparent 38%),
+    #111318 !important;
+}
+body.dark-mode .board,
+body.dark-mode .card{
+  background:#1b1f27 !important;
+  color:#f4f1ea !important;
+  border-color:#4a405f !important;
+}
+body.dark-mode .ad-zone{
+  background:#12151a !important;
+  border-color:#4a405f !important;
+  color:#f4f1ea !important;
+}
+body.dark-mode .browse,
+body.dark-mode .browse-section,
+body.dark-mode .board-filter,
+body.dark-mode .category-browser,
+body.dark-mode .category-header,
+body.dark-mode .category-panel{
+  background:#1b1f27 !important;
+  color:#f4f1ea !important;
+  border-color:#4a405f !important;
+}
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode .category-filter{
+  background:#15181e !important;
+  color:#f4f1ea !important;
+  border-color:#4a405f !important;
+}
+body.dark-mode .modal-box{
+  background:#1b1f27 !important;
+  color:#f4f1ea !important;
+  border-color:#8064b7 !important;
+}
+body.dark-mode .modal-box input,
+body.dark-mode .modal-box .category-select{
+  background:#15181e !important;
+  color:#f4f1ea !important;
+}
+body.dark-mode .modal-box h2,
+body.dark-mode .modal-box label,
+body.dark-mode .ad-product-name,
+body.dark-mode .board-top,
+body.dark-mode .board-number{
+  color:#f4f1ea !important;
+}
+body.dark-mode .ad-product-url,
+body.dark-mode .browse p,
+body.dark-mode .browse small,
+body.dark-mode .category-header p{
+  color:#bdb7c9 !important;
+}
+body.dark-mode .dark-mode-toggle{
+  background:#2b2440 !important;
+  color:#eadfff !important;
+  border-color:#8064b7 !important;
+}
+
 </style>
 </head>
 <body>
@@ -596,6 +834,7 @@ button:focus{
   <h1 class="nav-title">Get your product in a <span>premium spot.</span></h1>
   <div class="nav-cta">
     <button class="x-share-btn" type="button" onclick="shareOnX()">Share on X</button>
+<button type="button" id="darkModeToggle" class="dark-mode-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode" title="Dark mode">🌙 <span>Dark</span></button>
   </div>
 </nav>
 
@@ -1886,7 +2125,6 @@ button:focus{
       <div>
         <label>Destination Link</label>
         <input id="productUrl" placeholder="https://example.com or @handle">
-        <div class="hint">Website URL, profile URL, ya handle — dono chalenge. Example: https://mybrand.com · @mybrand · x.com/mybrand</div>
       </div>
       <div>
         <label>Social Handle <span style="color:var(--muted);font-weight:700">(optional, URL ke saath)</span></label>
@@ -2352,6 +2590,26 @@ function closeLegal(){
 }
 initCategoryFilter();
 loadAdsFromSupabase().then(() => renderCurrentCategory());
+
+function applyDarkMode(enabled){
+  document.body.classList.toggle("dark-mode", enabled);
+  const btn = document.getElementById("darkModeToggle");
+  if(btn){
+    btn.innerHTML = enabled ? "☀️ <span>Light</span>" : "🌙 <span>Dark</span>";
+    btn.title = enabled ? "Light mode" : "Dark mode";
+    btn.setAttribute("aria-label", enabled ? "Switch to light mode" : "Switch to dark mode");
+  }
+  try{ localStorage.setItem("adboard_dark_mode", enabled ? "1" : "0"); }catch(e){}
+}
+function toggleDarkMode(){
+  applyDarkMode(!document.body.classList.contains("dark-mode"));
+}
+(function initDarkMode(){
+  let enabled = false;
+  try{ enabled = localStorage.getItem("adboard_dark_mode") === "1"; }catch(e){}
+  applyDarkMode(enabled);
+})();
+
 </script>
 </body>
 </html>
