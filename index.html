@@ -438,6 +438,30 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);text-a
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style id="v42-desktop-half-height">
+/* V42: desktop ONLY — halve the HEIGHT of featured Boards 1, 2 and 3. Widths/layout unchanged. */
+@media (min-width:801px){
+  .featured-row .board:nth-child(1),
+  .featured-row .board:nth-child(3){
+    height:90px !important;
+    min-height:90px !important;
+  }
+  .featured-row .board:nth-child(2){
+    height:120px !important;
+    min-height:120px !important;
+  }
+}
+</style>
+
+<style id="desktop-featured-height-fix">
+/* Desktop only: keep Board #1 largest; height only */
+@media(min-width:801px){
+  .featured-row .board[data-board="1"]{height:260px !important;min-height:260px !important;}
+  .featured-row .board[data-board="2"]{height:200px !important;min-height:200px !important;}
+  .featured-row .board[data-board="3"]{height:200px !important;min-height:200px !important;}
+}
+</style>
 </head>
 <body>
 
