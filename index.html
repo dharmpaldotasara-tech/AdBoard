@@ -878,6 +878,37 @@ body.dark-mode .dark-mode-toggle{
 </style>
 </head>
 <body>
+<!-- AdBoard Live Stats -->
+<div id="adboardLiveStats" class="adboard-live-stats" aria-live="polite">
+  <div class="live-stat"><span class="live-dot"></span><span>Online Now:</span> <strong id="onlineNowCount">0</strong></div>
+  <div class="live-stat"><span>Visitors:</span> <strong id="totalVisitorsCount">0</strong></div>
+</div>
+<style>
+.adboard-live-stats{
+  display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
+  margin:10px auto 16px;padding:8px 12px;
+  font-size:13px;
+}
+.live-stat{
+  padding:7px 12px;border:1px solid rgba(120,95,170,.22);
+  border-radius:999px;background:rgba(255,255,255,.72);
+}
+.live-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:#36a269;margin-right:6px;vertical-align:1px;
+}
+.board-click-count{
+  position:absolute;right:10px;bottom:8px;z-index:6;
+  font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;
+  background:rgba(255,255,255,.92);color:#5f4a86;
+  border:1px solid rgba(120,95,170,.22);pointer-events:none;
+}
+.dark-mode .live-stat,.dark-mode .board-click-count,
+body.dark-mode .live-stat,body.dark-mode .board-click-count{
+  background:rgba(35,31,45,.92);color:#eee;
+}
+</style>
+
 <div class="container">
 <nav>
   <div class="logo">Ad<span>Board</span></div>
@@ -2315,6 +2346,128 @@ function displayHandle(ad){
   return "";
 }
 
+
+/* ---------- Live click + visitor statistics ---------- */
+const AD_CLICK_RPC = "record_ad_click";
+const VISITOR_HEARTBEAT_MS = 15000;
+const VISITOR_STALE_MS = 45000;
+let visitorSessionId = null;
+let visitorHeartbeatTimer = null;
+let visitorChannel = null;
+
+function getVisitorSessionId(){
+  if(visitorSessionId) return visitorSessionId;
+  try{
+    const key = "adboard_visitor_session";
+    let id = sessionStorage.getItem(key);
+    if(!id){
+      id = (crypto && crypto.randomUUID) ? crypto.randomUUID() :
+        ("v-" + Date.now() + "-" + Math.random().toString(36).slice(2));
+      sessionStorage.setItem(key,id);
+    }
+    visitorSessionId = id;
+    return id;
+  }catch(e){
+    visitorSessionId = "v-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    return visitorSessionId;
+  }
+}
+
+function updateLiveStat(id,value){
+  const el=document.getElementById(id);
+  if(el) el.textContent = Number.isFinite(Number(value)) ? Number(value).toLocaleString() : "0";
+}
+
+async function registerVisitorHeartbeat(){
+  if(!supabaseClient) return;
+  const sid=getVisitorSessionId();
+  try{
+    const {data,error}=await supabaseClient.rpc("visitor_heartbeat",{p_session_id:sid});
+    if(error) throw error;
+    if(data && typeof data==="object"){
+      updateLiveStat("onlineNowCount",data.online_now);
+      updateLiveStat("totalVisitorsCount",data.total_visitors);
+    }
+  }catch(e){
+    console.debug("Visitor heartbeat unavailable:",e);
+  }
+}
+
+function startVisitorHeartbeat(){
+  if(visitorHeartbeatTimer) return;
+  registerVisitorHeartbeat();
+  visitorHeartbeatTimer=setInterval(registerVisitorHeartbeat,VISITOR_HEARTBEAT_MS);
+  window.addEventListener("beforeunload",()=>{
+    try{
+      if(supabaseClient) supabaseClient.rpc("visitor_leave",{p_session_id:getVisitorSessionId()});
+    }catch(e){}
+  },{once:true});
+}
+
+async function refreshLiveStats(){
+  if(!supabaseClient) return;
+  try{
+    const {data,error}=await supabaseClient.rpc("get_live_stats");
+    if(error) throw error;
+    if(data && typeof data==="object"){
+      updateLiveStat("onlineNowCount",data.online_now);
+      updateLiveStat("totalVisitorsCount",data.total_visitors);
+    }
+  }catch(e){}
+}
+
+async function recordBoardClick(ad){
+  if(!ad) return;
+  const category=ad.category || selectedViewCategory || "";
+  const boardNumber=Number(ad.board_number ?? ad.board ?? ad.actualBoard ?? 0);
+  if(!category || !boardNumber) return;
+
+  try{
+    if(supabaseClient){
+      const {data,error}=await supabaseClient.rpc(AD_CLICK_RPC,{
+        p_category:category,
+        p_board_number:boardNumber
+      });
+      if(error) throw error;
+
+      // RPC may return the updated click count.
+      const count = (typeof data==="number") ? data :
+        (data && (data.clicks ?? data.click_count));
+      if(Number.isFinite(Number(count))){
+        ad.clicks=Number(count);
+        return Number(count);
+      }
+    }
+  }catch(e){
+    console.debug("Click counter RPC unavailable:",e);
+  }
+
+  // Safe fallback for preview/testing when RPC isn't installed yet.
+  try{
+    const key="adboard_clicks_"+category+"_"+boardNumber;
+    const count=Number(localStorage.getItem(key)||0)+1;
+    localStorage.setItem(key,String(count));
+    ad.clicks=count;
+    return count;
+  }catch(e){}
+  return Number(ad.clicks||0);
+}
+
+function showBoardClickCount(n,ad){
+  const board=document.querySelector(`[data-board="${n}"]`);
+  if(!board) return;
+  const zone=board.querySelector(".ad-zone");
+  if(!zone) return;
+  let badge=zone.querySelector(".board-click-count");
+  if(!badge){
+    badge=document.createElement("div");
+    badge.className="board-click-count";
+    zone.appendChild(badge);
+  }
+  badge.textContent="Clicks: "+Number(ad?.clicks||0).toLocaleString();
+}
+
+
 async function loadAdsFromSupabase(){
   if(!supabaseClient){
     showSupabaseConfigWarning();
@@ -2463,7 +2616,11 @@ function setBoardActive(n, ad){
     nameLink.href = url || "#";
     nameLink.target = "_blank";
     nameLink.rel = "noopener noreferrer";
-    nameLink.addEventListener("click", (event) => event.stopPropagation());
+    nameLink.addEventListener("click", async (event) => {
+  event.stopPropagation();
+  const count = await recordBoardClick(ad);
+  if(Number.isFinite(Number(count))) showBoardClickCount(n,ad);
+});
 
     const link = document.createElement("a");
     link.className = "ad-product-url ad-click-link";
@@ -2471,7 +2628,11 @@ function setBoardActive(n, ad){
     link.href = url || "#";
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.addEventListener("click", (event) => event.stopPropagation());
+    link.addEventListener("click", async (event) => {
+  event.stopPropagation();
+  const count = await recordBoardClick(ad);
+  if(Number.isFinite(Number(count))) showBoardClickCount(n,ad);
+});
 
     content.appendChild(nameLink);
     if(destinationLabel) content.appendChild(link);
@@ -2481,7 +2642,14 @@ function setBoardActive(n, ad){
     if(plus) plus.style.display = "none";
 
     zone.title = `Open ${displayAdLabel(ad)}`;
-    zone.onclick = () => openDestination(url);
+    zone.onclick = async (event) => {
+    // Direct link clicks on the name/URL anchors are handled below; this handler
+    // covers the clickable ad area itself.
+    if(event && event.target && event.target.closest && event.target.closest(".ad-click-link")) return;
+    const count = await recordBoardClick(ad);
+    if(Number.isFinite(Number(count))) showBoardClickCount(n,ad);
+    openDestination(url);
+  };
 
     iframe.addEventListener("error", () => {
       iframe.style.display = "none";
@@ -2729,6 +2897,9 @@ function toggleDarkMode(){
   applyDarkMode(enabled);
 })();
 
+
+startVisitorHeartbeat();
+refreshLiveStats();
 </script>
 </body>
 </html>
