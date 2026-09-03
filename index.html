@@ -7,6 +7,16 @@
 <meta property="og:title" content="AdBoard — Free Advertisement Marketplace">
 <meta property="og:description" content="Claim your advertisement board on AdBoard and get discovered.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://dharmpaldotasara-tech.github.io/AdBoard/">
+<meta property="og:image" content="https://dharmpaldotasara-tech.github.io/AdBoard/AdBoard-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AdBoard — Free Advertisement Marketplace">
+<meta name="twitter:site" content="@dharmpaldotasara">
+<meta name="twitter:url" content="https://dharmpaldotasara-tech.github.io/AdBoard/">
+<meta name="twitter:image" content="https://dharmpaldotasara-tech.github.io/AdBoard/AdBoard-preview.png">
+<meta name="twitter:image:alt" content="AdBoard — Free Advertisement Marketplace">
+
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="AdBoard — Free Advertisement Marketplace">
 <meta name="twitter:description" content="Claim your advertisement board on AdBoard and get discovered.">
@@ -422,6 +432,12 @@ footer{border-top:1px solid var(--line);padding:28px 0;color:var(--muted);text-a
 }
 </style>
 
+
+<style id="v36-main-board1">
+.featured-row .board:nth-child(2) .board-category{font-weight:950}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -1653,69 +1669,69 @@ const categories=[
 "Services","Startup","Other"
 ];
 
-function storageKey(category, board){ return `adboard_${category}_${board}`; }
-function cycleKey(category){ return `adboard_cycle_${category}`; }
-function getAd(category, board){
-  try{return JSON.parse(localStorage.getItem(storageKey(category,board))||"null");}catch(e){return null;}
-}
-function saveAd(category, board, ad){
-  try{localStorage.setItem(storageKey(category,board),JSON.stringify(ad));}catch(e){}
-}
-function removeAd(category, board){
-  try{localStorage.removeItem(storageKey(category,board));}catch(e){}
-}
-function getCycleStart(category){
-  const v=Number(localStorage.getItem(cycleKey(category))||0);
-  return Number.isFinite(v)?v:0;
-}
-function setCycleStart(category,ts){try{localStorage.setItem(cycleKey(category),String(ts));}catch(e){}}
+// SUPABASE CONFIGURATION
+// Replace these two placeholders with your Supabase project's URL and anon/public key.
+const SUPABASE_URL = "https://tbgwpkoccupepkvbgebs.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_Z_hyOVRWkbRdJGFXHldrkQ_PITjlc-a";
+const supabaseClient = (window.supabase && SUPABASE_URL !== "YOUR_SUPABASE_URL" && SUPABASE_ANON_KEY !== "YOUR_SUPABASE_ANON_KEY")
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
 
-// PROTECTED #1 BOARDS:
-// Software / SaaS and Gaming keep Board #1 permanently protected.
-// The All Categories #1 slot is a protected display slot (All Categories is a combined view).
-// Every other category includes Board #1 in the 3-day top-1/3 rotation.
-const PROTECTED_BOARD1_CATEGORIES = new Set(["Software / SaaS", "Gaming"]);
+let dbAds = new Map();
+let mainBoard1Ad = null;
+let supabaseReady = false;
 
-function runThreeDayCycle(category){
-  const now=Date.now();
-  let start=getCycleStart(category);
-  const firstRank = PROTECTED_BOARD1_CATEGORIES.has(category) ? 2 : 1;
-  const ads=[];
-  for(let n=firstRank;n<=100;n++){
-    const ad=getAd(category,n);
-    if(ad) ads.push({board:n,ad});
-  }
-  if(!ads.length){ if(start) setCycleStart(category,0); return false; }
-  if(!start){
-    // Start the 3-day clock when this category first gets a claim.
-    start=now; setCycleStart(category,start); return false;
-  }
-  if(now-start<CYCLE_MS) return false;
+function adKey(category, board){ return `${category}__${board}`; }
+function getAd(category, board){ return dbAds.get(adKey(category, Number(board))) || null; }
+function getMainBoard1(){ return mainBoard1Ad; }
 
-  // Catch up if the browser was closed for multiple 3-day cycles.
-  let changed=false;
-  let cycles=Math.floor((now-start)/CYCLE_MS);
-  while(cycles>0){
-    const current=[];
-    for(let n=firstRank;n<=100;n++){const ad=getAd(category,n);if(ad)current.push({board:n,ad});}
-    if(!current.length){setCycleStart(category,now);break;}
-    const removeCount=Math.max(1,Math.floor(current.length/3));
-    const survivors=current.slice(removeCount);
-    current.slice(0,removeCount).forEach(x=>removeAd(category,x.board));
-    // Clear all survivor positions, then rewrite them into the lowest available ranks.
-    current.slice(removeCount).forEach(x=>removeAd(category,x.board));
-    survivors.forEach((x,i)=>{
-      const newBoard=i+firstRank;
-      const moved={...x.ad,rank:newBoard,shiftedAt:new Date(now).toISOString()};
-      saveAd(category,newBoard,moved);
-    });
-    changed=true;
-    cycles--;
-    start+=CYCLE_MS;
-    setCycleStart(category,start);
+async function loadAdsFromSupabase(){
+  if(!supabaseClient){
+    showSupabaseConfigWarning();
+    return false;
   }
-  return changed;
+  try{
+    // Let the database apply any due 3-day rotations before reading the boards.
+    await supabaseClient.rpc('rotate_due_categories');
+    const [{data:ads,error:adsError},{data:main,error:mainError}] = await Promise.all([
+      supabaseClient.from('adboard_ads').select('*').order('category').order('board_number'),
+      supabaseClient.from('adboard_main_board1').select('*').limit(1)
+    ]);
+    if(adsError) throw adsError;
+    if(mainError) throw mainError;
+    dbAds = new Map((ads||[]).map(a=>[adKey(a.category,a.board_number),a]));
+    mainBoard1Ad = (main&&main[0]) || null;
+    supabaseReady = true;
+    return true;
+  }catch(e){
+    console.error(e);
+    showSupabaseError(e);
+    return false;
+  }
 }
+
+function showSupabaseConfigWarning(){
+  const notice=document.getElementById('notice');
+  if(notice){
+    notice.textContent='Supabase is not connected yet. Add your Supabase URL and anon key in the HTML configuration.';
+    notice.style.display='block';
+  }
+}
+function showSupabaseError(e){
+  const notice=document.getElementById('notice');
+  if(notice){
+    notice.textContent='Could not load AdBoard data from Supabase. Please check the Supabase configuration and SQL setup.';
+    notice.style.display='block';
+  }
+  console.error('AdBoard Supabase error:',e);
+}
+
+// Category boards: ALL category Board #1 positions participate in the 3-day rotation.
+// Only the MAIN HOMEPAGE Board #1 is permanent and uses its own database table.
+const PROTECTED_BOARD1_CATEGORIES = new Set();
+
+function runThreeDayCycle(category){ return false; }
+
 
 function openAd(n){
   currentBoard=n;
@@ -1724,7 +1740,11 @@ function openAd(n){
   document.getElementById("productName").value="";
   document.getElementById("productUrl").value="";
   currentCategory = selectedViewCategory !== "ALL" ? selectedViewCategory : "";
-  document.getElementById("chosenCategory").textContent=currentCategory || "Choose a Category";
+  if(selectedViewCategory==="ALL" && n===1){
+    currentCategory="__MAIN__";
+  }
+  document.getElementById("chosenCategory").textContent=
+    currentCategory==="__MAIN__" ? "Main Homepage · Permanent" : (currentCategory || "Choose a Category");
   document.getElementById("adModal").classList.add("show");
 }
 function closeAll(){document.getElementById("adModal").classList.remove("show");document.getElementById("catModal").classList.remove("show");}
@@ -1753,29 +1773,51 @@ function setBoardActive(n,ad){
   const btn=board.querySelector(".claim"); btn.textContent="Advertisement Active"; btn.disabled=true;
 }
 function renderCurrentCategory(){
-  if(selectedViewCategory!=="ALL") runThreeDayCycle(selectedViewCategory);
-  else categories.forEach(c=>runThreeDayCycle(c));
-  const boards=[...document.querySelectorAll(".board[data-board]")];
+  const boards=[...document.querySelectorAll('.board[data-board]')];
   boards.forEach(b=>resetBoard(b));
-  const physical=document.getElementById("boardsPhysicalView");
-  const allView=document.getElementById("allCategoriesView");
-  if(selectedViewCategory==="ALL"){
-    physical.style.display="none";
-    allView.style.display="grid";
+  const physical=document.getElementById('boardsPhysicalView');
+  const allView=document.getElementById('allCategoriesView');
+  if(selectedViewCategory==='ALL'){
+    physical.style.display='block';
+    allView.style.display='grid';
+    const mainAd=getMainBoard1();
+    if(mainAd) setBoardActive(1,mainAd);
     renderAllCategories();
   }else{
-    physical.style.display="block";
-    allView.style.display="none";
-    boards.forEach(b=>{const n=b.dataset.board;const ad=getAd(selectedViewCategory,n);if(ad)setBoardActive(n,ad);});
+    physical.style.display='block';
+    allView.style.display='none';
+    boards.forEach(b=>{
+      const n=Number(b.dataset.board);
+      const ad=getAd(selectedViewCategory,n);
+      if(ad) setBoardActive(n,ad);
+    });
   }
-  const title=document.getElementById("categoryViewTitle");
-  title.textContent=selectedViewCategory==="ALL"?"All Categories · 100 Advertisement Boards":`${selectedViewCategory} · 100 Advertisement Boards`;
-  document.getElementById("boardCategoryFilter").value=selectedViewCategory;
+  const title=document.getElementById('categoryViewTitle');
+  title.textContent=selectedViewCategory==='ALL'?'All Categories · 100 Advertisement Boards':`${selectedViewCategory} · 100 Advertisement Boards`;
+  document.getElementById('boardCategoryFilter').value=selectedViewCategory;
 }
+
 function renderAllCategories(){
   const box=document.getElementById("allCategoriesView");
   box.innerHTML="";
   let total=0;
+  const mainAd=getMainBoard1();
+  if(mainAd){
+    const mainSection=document.createElement("section");
+    mainSection.className="all-cat-section";
+    mainSection.innerHTML=`<div class="all-cat-head">
+      <div class="all-cat-name">Main Homepage · Board 1</div>
+      <div class="all-cat-count">PERMANENT</div>
+    </div><div class="all-cat-grid"></div>`;
+    const grid=mainSection.querySelector(".all-cat-grid");
+    const card=document.createElement("div");
+    card.className="all-ad-card";
+    card.innerHTML=`<div class="mini-top"><span>BOARD 1</span><span>PERMANENT</span></div>
+      <div class="mini-plus">＋</div><div class="mini-days">PERMANENT</div>`;
+    card.onclick=()=>openDestination(mainAd.url);
+    grid.appendChild(card);
+    box.appendChild(mainSection);
+  }
   categories.forEach(c=>{
     const ads=[];
     for(let n=1;n<=100;n++){const ad=getAd(c,n);if(ad)ads.push({board:n,ad});}
@@ -1801,21 +1843,39 @@ function renderAllCategories(){
 }
 
 function changeBoardCategory(c){selectedViewCategory=c;renderCurrentCategory();document.getElementById("boards").scrollIntoView({behavior:"smooth",block:"start"});}
-function submitAd(){
-  const name=document.getElementById("productName").value.trim();
-  const url=document.getElementById("productUrl").value.trim();
-  const notice=document.getElementById("notice");
-  if(!name||!url||!currentCategory){notice.textContent="Please enter product name, destination link and choose a category.";notice.style.display="block";return;}
-  try{new URL(url)}catch(e){notice.textContent="Please enter a valid destination link.";notice.style.display="block";return;}
-  if(getAd(currentCategory,currentBoard)){notice.textContent=`Board ${currentBoard} is already active in ${currentCategory}. Please choose another board.`;notice.style.display="block";return;}
-  const ad={name,url,category:currentCategory,claimedAt:new Date().toISOString(),rank:currentBoard};
-  saveAd(currentCategory,currentBoard,ad);
-  if(!getCycleStart(currentCategory)) setCycleStart(currentCategory,Date.now());
-  selectedViewCategory=currentCategory;
-  renderCurrentCategory();
-  notice.textContent=`Board ${currentBoard} is FREE and active in ${currentCategory}. Every 3 days, the top 1/3 of claimed boards will rotate out and lower ads will move up automatically.`;
-  notice.style.display="block";
+async function submitAd(){
+  const name=document.getElementById('productName').value.trim();
+  const url=document.getElementById('productUrl').value.trim();
+  const notice=document.getElementById('notice');
+  if(!name||!url||!currentCategory){notice.textContent='Please enter product name, destination link and choose a category.';notice.style.display='block';return;}
+  try{new URL(url)}catch(e){notice.textContent='Please enter a valid destination link.';notice.style.display='block';return;}
+  if(!supabaseClient){showSupabaseConfigWarning();return;}
+
+  notice.style.display='none';
+  const isMainPermanent=(currentCategory==='__MAIN__' && currentBoard===1);
+  try{
+    const result=isMainPermanent
+      ? await supabaseClient.rpc('claim_main_board1',{p_product_name:name,p_destination_url:url})
+      : await supabaseClient.rpc('claim_ad',{p_category:currentCategory,p_board_number:Number(currentBoard),p_product_name:name,p_destination_url:url});
+    if(result.error) throw result.error;
+
+    await loadAdsFromSupabase();
+    selectedViewCategory=isMainPermanent?'ALL':currentCategory;
+    renderCurrentCategory();
+    notice.textContent=isMainPermanent
+      ? 'Main Homepage Board 1 is now active permanently. It will not be removed by the 3-day rotation.'
+      : `Board ${currentBoard} is FREE and active in ${currentCategory}. Every 3 days, the top 1/3 of claimed boards will rotate out and lower ads will move up automatically.`;
+    notice.style.display='block';
+  }catch(e){
+    console.error(e);
+    const msg=String(e?.message||e?.details||e||'');
+    notice.textContent=msg.includes('already active')
+      ? msg
+      : 'This board could not be claimed. It may already be active or the Supabase setup needs checking.';
+    notice.style.display='block';
+  }
 }
+
 function initCategoryFilter(){
   const select=document.getElementById("boardCategoryFilter");
   if(!select) return;
@@ -1847,7 +1907,7 @@ const legalPages = {
     <h2>4. Board Ranking &amp; Rotation</h2>
     <p>Advertisement boards are ranked positions, not a guarantee of traffic, sales, impressions, clicks, search ranking, or business results. During the current model, claimed advertisements are subject to an automatic 3-day rotation. Category-specific rotation removes the top one-third of active advertisements, subject to the site's protected Board #1 rules, and surviving advertisements move upward.</p>
     <h2>5. Protected Boards</h2>
-    <p>Under the current implementation, Board #1 is protected for Software / SaaS and Gaming. The All Categories view is a combined display and does not create a separate paid or independently claimable Board #1.</p>
+    <p>All category Board #1 positions participate in the 3-day rotation. Only the Main Homepage Board #1 is permanent and is not removed by the 3-day rotation.</p>
     <h2>6. Removal &amp; Suspension</h2>
     <p>AdBoard may remove or disable an advertisement that violates these terms, applicable law, or the integrity of the marketplace. We may also modify, suspend, or discontinue features of the service.</p>
     <h2>7. No Guarantee</h2>
@@ -1902,5 +1962,5 @@ function closeLegal(){
 
 
 initCategoryFilter();
-renderCurrentCategory();
+loadAdsFromSupabase().then(()=>renderCurrentCategory());
 </script>
