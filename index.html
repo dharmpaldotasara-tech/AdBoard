@@ -138,8 +138,22 @@ button{font:inherit}
 }
 .ad-plus{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  font-size:40px;line-height:1;font-weight:300;color:#fff;user-select:none;
+  font-size:40px;line-height:1;font-weight:300;color:#1d2418;user-select:none;
 }
+.ad-content{
+  position:absolute;left:14px;right:14px;top:50%;transform:translateY(-50%);
+  z-index:2;text-align:center;pointer-events:none;
+}
+.ad-product-name{
+  font-size:clamp(18px,2.2vw,30px);font-weight:950;color:#1d2418;
+  line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.ad-product-url{
+  margin-top:7px;font-size:12px;font-weight:800;color:#b9c9bc;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.board.active .ad-product-name{color:var(--accent)}
+.board.active .ad-product-url{color:#dce8df}
 .ad-days{
   position:absolute;right:8px;bottom:8px;z-index:3;
   font-size:11px;font-weight:950;color:#dce8df;
@@ -165,17 +179,17 @@ button{font:inherit}
   padding:24px;box-shadow:0 35px 110px #000;
 }
 .modal-head{display:flex;justify-content:space-between;gap:15px}
-.close{border:0;background:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
+.close{border:0;background:none;color:#1d2418;font-size:30px;cursor:pointer;line-height:1}
 .form{display:grid;gap:13px;margin-top:19px}
 label{font-size:13px;color:#b9c9bc;font-weight:800}
 input{
   width:100%;margin-top:6px;padding:14px;border-radius:11px;
-  border:1px solid #304934;background:#07100b;color:#fff;outline:none;
+  border:1px solid #304934;background:#f7f1df;color:#1d2418;outline:none;
 }
 input:focus{border-color:var(--accent)}
 .category-select{
   width:100%;margin-top:6px;padding:14px 15px;border-radius:11px;
-  border:1px solid #304934;background:#07100b;color:#fff;
+  border:1px solid #304934;background:#f7f1df;color:#1d2418;
   display:flex;justify-content:space-between;align-items:center;
   cursor:pointer;text-align:left;font-weight:800;
 }
@@ -237,6 +251,342 @@ footer a{color:var(--accent);text-decoration:none}
   .featured-row .board[data-board="3"]{height:165px;min-height:165px}
   .more-boards .board{height:135px;min-height:135px}
 }
+
+/* ===== AdBoard Cream Homepage Theme ===== */
+:root{
+  --cream-bg:#f7f1df;
+  --cream-panel:#fffaf0;
+  --cream-panel-2:#f2ead4;
+  --cream-border:#ded3b8;
+  --ink:#1d2418;
+  --muted:#626958;
+  --accent:#dfff19;
+  --accent-2:#b8d900;
+  --shadow:0 12px 35px rgba(75,64,31,.10);
+}
+html,body{
+  background:var(--cream-bg) !important;
+  color:var(--ink) !important;
+}
+body{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(223,255,25,.16), transparent 34%),
+    var(--cream-bg) !important;
+}
+header, nav, .hero, .section, .browse, .category-bar, .boards-wrap,
+.marketplace, .board-section, .card, .board, .modal, .panel{
+  color:var(--ink) !important;
+}
+.board, .category-box, .browse-box, .marketplace-box, .card{
+  background:rgba(255,250,240,.82) !important;
+  border-color:var(--cream-border) !important;
+  box-shadow:var(--shadow) !important;
+}
+.ad-zone{
+  background:rgba(255,250,240,.72) !important;
+  border-color:#d9cfb8 !important;
+  color:var(--ink) !important;
+}
+.board-category{
+  color:#6d8312 !important;
+}
+.ad-plus{
+  color:#74796e !important;
+}
+.ad-product-name{
+  color:var(--ink) !important;
+}
+.ad-product-url{
+  color:#65705c !important;
+}
+button, .claim, .cta, .explore{
+  color:#1d2418 !important;
+}
+input, select, textarea{
+  background:#fffaf0 !important;
+  color:var(--ink) !important;
+  border-color:var(--cream-border) !important;
+}
+input::placeholder, textarea::placeholder{
+  color:#858b7b !important;
+}
+small, .muted, .sub, .description{
+  color:var(--muted) !important;
+}
+
+
+/* ===== Cream treatment for marketplace/category areas ===== */
+.browse,
+.browse-section,
+.browse-by-category,
+.category-browser,
+.category-header,
+.marketplace-label,
+.marketplace-badge,
+.advertisement-marketplace,
+.marketplace,
+.category-bar,
+.category-panel,
+.category-box,
+select,
+.board-section-header,
+.section-title,
+.hero-badge{
+  background:rgba(255,250,240,.90) !important;
+  color:#1d2418 !important;
+  border-color:#ded3b8 !important;
+}
+.marketplace-label,
+.marketplace-badge,
+.advertisement-marketplace,
+.hero-badge{
+  box-shadow:0 6px 18px rgba(75,64,31,.08) !important;
+}
+.browse h2,
+.browse h3,
+.browse-by-category h2,
+.browse-by-category h3,
+.category-header h2,
+.category-header h3,
+.marketplace h2,
+.marketplace h3,
+.marketplace-label,
+.marketplace-badge{
+  color:#1d2418 !important;
+}
+.browse p,
+.browse small,
+.category-header p,
+.category-header small{
+  color:#626958 !important;
+}
+.category-bar select,
+.category-browser select,
+.browse select,
+select{
+  background:#fffaf0 !important;
+  color:#1d2418 !important;
+  border-color:#ded3b8 !important;
+}
+
+
+/* ===== AdBoard Lavender + Cream Theme ===== */
+:root{
+  --lavender:#e7dcff;
+  --lavender-strong:#d4c0ff;
+  --lavender-border:#c4a8ff;
+  --lavender-deep:#6338b8;
+  --cream-bg:#fbf6e8;
+  --cream-panel:#fffaf0;
+  --ink:#171b12;
+  --muted:#5f6258;
+}
+html,body{
+  background:var(--cream-bg) !important;
+  color:var(--ink) !important;
+}
+body{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(231,220,255,.55), transparent 35%),
+    var(--cream-bg) !important;
+}
+/* Marketplace badge */
+.advertisement-marketplace,
+.marketplace-label,
+.marketplace-badge,
+.hero-badge{
+  background:var(--lavender) !important;
+  color:var(--lavender-deep) !important;
+  border-color:var(--lavender-border) !important;
+}
+/* Browse by Category container */
+.browse,
+.browse-section,
+.browse-by-category,
+.category-browser,
+.category-header,
+.category-panel,
+.browse-box,
+.category-box{
+  background:var(--lavender) !important;
+  color:var(--ink) !important;
+  border-color:var(--lavender-border) !important;
+}
+.browse h2,.browse h3,
+.browse-by-category h2,.browse-by-category h3,
+.category-header h2,.category-header h3{
+  color:var(--ink) !important;
+}
+.browse p,.browse small,
+.category-header p,.category-header small{
+  color:#5d5572 !important;
+}
+/* Board cards and ad areas */
+.board,.card{
+  background:rgba(231,220,255,.72) !important;
+  border-color:var(--lavender-border) !important;
+  box-shadow:0 12px 30px rgba(91,60,145,.10) !important;
+}
+.ad-zone{
+  background:rgba(251,246,232,.82) !important;
+  border-color:#cbb9e8 !important;
+}
+.board-category{
+  color:var(--lavender-deep) !important;
+}
+.ad-plus{
+  color:#7756a9 !important;
+}
+.ad-product-name{
+  color:var(--ink) !important;
+}
+.ad-product-url{
+  color:#665b78 !important;
+}
+/* Claim buttons */
+.claim,.cta,.explore{
+  background:var(--lavender-strong) !important;
+  border-color:var(--lavender-border) !important;
+  color:var(--ink) !important;
+}
+/* Premium / featured labels */
+.premium,.featured,
+.badge-premium,.badge-featured{
+  background:var(--lavender-strong) !important;
+  color:var(--lavender-deep) !important;
+  border-color:var(--lavender-border) !important;
+}
+/* Category dropdown */
+select,.category-bar select,.category-browser select,.browse select{
+  background:var(--cream-panel) !important;
+  color:var(--ink) !important;
+  border-color:#d7c9ad !important;
+}
+/* Keep the main Explore CTA neon-lime */
+.explore-advertisement,
+.explore-boards,
+.hero-cta{
+  background:#dfff19 !important;
+  color:#171b12 !important;
+}
+
+
+/* ===== Replace ALL neon accents with lavender ===== */
+:root{
+  --accent:#d4c0ff !important;
+  --accent-2:#bfa0ff !important;
+  --neon:#d4c0ff !important;
+  --lime:#d4c0ff !important;
+}
+button,
+.cta,
+.claim,
+.explore,
+.hero-cta,
+.explore-advertisement,
+.explore-boards,
+.share-btn,
+.badge,
+.premium,
+.featured,
+.marketplace-label,
+.marketplace-badge,
+.advertisement-marketplace,
+.hero-badge{
+  background:#d4c0ff !important;
+  color:#2b1758 !important;
+  border-color:#bfa0ff !important;
+}
+button:hover,
+.cta:hover,
+.claim:hover,
+.explore:hover{
+  background:#cbb3fa !important;
+  color:#241344 !important;
+}
+.logo span,
+.accent,
+.highlight,
+.hero .accent,
+.section-title,
+.board-section-title,
+.category-title,
+.board-category,
+.premium,
+.featured{
+  color:#6338b8 !important;
+}
+input:focus,
+select:focus,
+textarea:focus,
+button:focus{
+  border-color:#bfa0ff !important;
+  box-shadow:0 0 0 3px rgba(212,192,255,.30) !important;
+}
+/* Any inline neon/lime backgrounds from existing components */
+[style*="#dfff19"],
+[style*="#dfff19"]{
+  background:#d4c0ff !important;
+  color:#2b1758 !important;
+}
+
+
+/* ===== FINAL EXACT LAVENDER OVERRIDES ===== */
+.board-area .board-filter{
+  background:#e7dcff !important;
+  border:1px solid #c4a8ff !important;
+  color:#171b12 !important;
+  border-radius:16px !important;
+  box-shadow:0 10px 28px rgba(91,60,145,.10) !important;
+}
+.board-area .filter-title{
+  color:#171b12 !important;
+}
+.board-area .filter-subtitle{
+  color:#5d5572 !important;
+}
+.board-area .category-filter{
+  background:#fffaf0 !important;
+  color:#171b12 !important;
+  border:1px solid #c4a8ff !important;
+}
+.board-area .category-filter option{
+  background:#fffaf0 !important;
+  color:#171b12 !important;
+}
+.board-area .category-view-title{
+  color:#6338b8 !important;
+}
+/* Hero marketplace badge */
+.hero .badge{
+  background:#e7dcff !important;
+  color:#6338b8 !important;
+  border:1px solid #c4a8ff !important;
+}
+/* Hero premium heading highlight */
+.nav-title span{
+  color:#6338b8 !important;
+}
+/* AdBoard logo highlight */
+.logo span{
+  color:#6338b8 !important;
+}
+/* All primary/action buttons: lavender, except no neon remains */
+.primary{
+  background:#d4c0ff !important;
+  color:#2b1758 !important;
+  border-color:#bfa0ff !important;
+}
+/* Boards */
+.board-area .board{
+  background:#e7dcff !important;
+  border-color:#c4a8ff !important;
+}
+.board-area .board .ad-zone{
+  background:#fbf6e8 !important;
+  border-color:#cbb9e8 !important;
+}
+
 </style>
 </head>
 <body>
@@ -1541,7 +1891,7 @@ footer a{color:var(--accent);text-decoration:none}
       <div>
         <label>Social Handle <span style="color:var(--muted);font-weight:700">(optional, URL ke saath)</span></label>
         <input id="productHandle" placeholder="@mybrand">
-        <div class="hint">URL ke saath handle bhi add kar sakte ho. Category ke hisaab se handle auto-link banega.</div>
+        
       </div>
       <div>
         <label>Choose a Category</label>
@@ -1636,6 +1986,28 @@ function resolveDestination(urlInput, handleInput, category){
   if(url) return { url, handle: cleanHandle(handleInput) };
   if(handle) return { url: handleToUrl(handle, category), handle };
   return { url: "", handle: "" };
+}
+
+function displayAdLabel(ad){
+  if(!ad) return "";
+  const name = String(ad.product_name || "").trim();
+  if(name) return name;
+  const url = adUrl(ad);
+  if(!url) return "ADVERTISEMENT";
+  try{
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./i, "");
+  }catch(e){}
+  return url;
+}
+function displayAdUrl(ad){
+  const url = adUrl(ad);
+  if(!url) return "";
+  try{
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./i, "") + (u.pathname && u.pathname !== "/" ? u.pathname : "");
+  }catch(e){}
+  return url;
 }
 
 function displayHandle(ad){
@@ -1748,14 +2120,35 @@ function setBoardActive(n, ad){
   if(!board) return;
   board.classList.add("active");
   const catEl = board.querySelector(".board-category");
-  if(catEl) catEl.textContent = ad.category || ad.product_name || "ACTIVE";
+  if(catEl) catEl.textContent = ad.category || "ACTIVE";
+
   const days = board.querySelector(".ad-days");
   const handle = displayHandle(ad);
-  if(days) days.textContent = handle || "";
+  const destinationLabel = displayAdUrl(ad);
+  if(days) days.textContent = handle || destinationLabel || "";
+
   const zone = board.querySelector(".ad-zone");
   const url = adUrl(ad);
   if(zone){
-    zone.title = handle ? `Open ${handle}` : "Open advertisement";
+    const oldContent = zone.querySelector(".ad-content");
+    if(oldContent) oldContent.remove();
+
+    const content = document.createElement("div");
+    content.className = "ad-content";
+    const name = document.createElement("div");
+    name.className = "ad-product-name";
+    name.textContent = displayAdLabel(ad);
+    const link = document.createElement("div");
+    link.className = "ad-product-url";
+    link.textContent = destinationLabel;
+    content.appendChild(name);
+    if(destinationLabel) content.appendChild(link);
+    zone.appendChild(content);
+
+    const plus = zone.querySelector(".ad-plus");
+    if(plus) plus.style.display = "none";
+
+    zone.title = `Open ${displayAdLabel(ad)}`;
     zone.onclick = () => openDestination(url);
   }
   const btn = board.querySelector(".claim");
