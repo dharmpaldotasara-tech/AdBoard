@@ -2201,8 +2201,13 @@ const PLATFORM_HOSTS = {
   "Business": "https://x.com/"
 };
 
-function adKey(category, board){ return `${category}__${board}`; }
-function getAd(category, board){ return dbAds.get(adKey(category, Number(board))) || null; }
+function normalizeCategory(value){
+  return String(value || "").trim().toLowerCase();
+}
+function adKey(category, board){ return `${normalizeCategory(category)}__${Number(board)}`; }
+function getAd(category, board){
+  return dbAds.get(adKey(category, Number(board))) || null;
+}
 function getMainBoard1(){ return mainBoard1Ad; }
 function adUrl(ad){ return ad && (ad.url || ad.destination_url || ""); }
 
@@ -2300,14 +2305,44 @@ async function loadAdsFromSupabase(){
   }
   try{
     await supabaseClient.rpc("rotate_due_categories");
-    const [{data:ads,error:adsError},{data:main,error:mainError}] = await Promise.all([
+    const [{data:ads,error:adsError},{data:mainRows,error:mainError}] = await Promise.all([
       supabaseClient.from("adboard_ads").select("*").order("category").order("board_number"),
-      supabaseClient.from("adboard_main_board1").select("*").limit(1)
+      supabaseClient.from("adboard_main_board1").select("*")
     ]);
     if(adsError) throw adsError;
     if(mainError) throw mainError;
-    dbAds = new Map((ads||[]).map(a => [adKey(a.category, a.board_number), a]));
-    mainBoard1Ad = (main && main[0]) || null;
+
+    // Normalize category/board keys so category filters cannot accidentally
+    // mix advertisements because of case or whitespace differences.
+    dbAds = new Map();
+    (ads || []).forEach(a => {
+      const board = Number(a.board_number);
+      if(!a.category || !Number.isFinite(board) || board < 1 || board > 100) return;
+      dbAds.set(adKey(a.category, board), a);
+    });
+
+    // The main-board table may contain more than one historical row. Never
+    // use an arbitrary .limit(1), because that can display an old ad (for
+    // example Instagram) even when the current Main Board 1 is Tee.
+    const rows = Array.isArray(mainRows) ? mainRows.filter(Boolean) : [];
+    const activeRows = rows.filter(r => {
+      if(Object.prototype.hasOwnProperty.call(r, "is_active")) return r.is_active !== false;
+      if(Object.prototype.hasOwnProperty.call(r, "active")) return r.active !== false;
+      return true;
+    });
+    const candidates = activeRows.length ? activeRows : rows;
+    const timestampValue = r => {
+      for(const key of ["updated_at","claimed_at","created_at","start_at","activated_at","inserted_at","id"]){
+        const v = r && r[key];
+        if(v === undefined || v === null || v === "") continue;
+        const n = Date.parse(String(v));
+        if(Number.isFinite(n)) return n;
+        const num = Number(v);
+        if(Number.isFinite(num)) return num;
+      }
+      return 0;
+    };
+    mainBoard1Ad = candidates.slice().sort((a,b) => timestampValue(b) - timestampValue(a))[0] || null;
     return true;
   }catch(e){
     console.error(e);
@@ -2450,7 +2485,7 @@ function renderCurrentCategory(){
     categories.forEach(c => {
       for(let n = 1; n <= 100; n++){
         const ad = getAd(c, n);
-        if(ad) allAds.push(ad);
+        if(ad && normalizeCategory(ad.category) === normalizeCategory(c)) allAds.push(ad);
       }
     });
     allAds.sort((a,b) => String(a.category || "").localeCompare(String(b.category || "")) || Number(a.board_number || 0) - Number(b.board_number || 0));
@@ -2479,7 +2514,11 @@ function renderCurrentCategory(){
     boards.forEach(b => {
       const n = Number(b.dataset.board);
       const ad = getAd(selectedViewCategory, n);
-      if(ad) setBoardActive(n, ad);
+      // Defensive category check: a category page must NEVER render an ad
+      // whose stored category belongs to another marketplace.
+      if(ad && normalizeCategory(ad.category) === normalizeCategory(selectedViewCategory)){
+        setBoardActive(n, ad);
+      }
     });
   }
   const title = document.getElementById("categoryViewTitle");
@@ -2518,7 +2557,7 @@ function renderAllCategories(){
     const ads = [];
     for(let n = 1; n <= 100; n++){
       const ad = getAd(c, n);
-      if(ad) ads.push({board:n, ad});
+      if(ad && normalizeCategory(ad.category) === normalizeCategory(c)) ads.push({board:n, ad});
     }
     if(!ads.length) return;
     total += ads.length;
