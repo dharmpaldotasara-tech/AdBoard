@@ -142,7 +142,7 @@ button{font:inherit}
 }
 .ad-content{
   position:absolute;left:14px;right:14px;top:50%;transform:translateY(-50%);
-  z-index:4;text-align:center;pointer-events:auto;
+  z-index:2;text-align:center;pointer-events:none;
 }
 .ad-product-name{
   font-size:clamp(18px,2.2vw,30px);font-weight:950;color:#1d2418;
@@ -152,12 +152,6 @@ button{font:inherit}
   margin-top:7px;font-size:12px;font-weight:800;color:#b9c9bc;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.ad-click-link{
-  display:block;text-decoration:none;cursor:pointer;pointer-events:auto;
-}
-.ad-click-link:hover{text-decoration:underline}
-.ad-product-name.ad-click-link{color:inherit}
-.ad-product-url.ad-click-link{color:inherit}
 .board.active .ad-product-name{color:var(--accent)}
 .board.active .ad-product-url{color:#dce8df}
 .ad-days{
@@ -832,83 +826,23 @@ body.dark-mode .dark-mode-toggle{
 }
 
 
-/* ===== Live Website/Homepage Preview Inside Active Boards ===== */
-.ad-zone{
-  position:relative !important;
-  overflow:hidden !important;
+/* ===== Automatic platform / website logo ===== */
+.ad-brand-logo{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:54px;height:54px;border-radius:15px;object-fit:contain;
+  z-index:3;pointer-events:none;background:#fffaf0;padding:7px;
+  border:1px solid #cbb9e8;box-shadow:0 8px 20px rgba(72,48,110,.12);
 }
-.ad-website-preview{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  border:0;
-  display:block;
-  pointer-events:none;
-  background:#fffaf0;
-  z-index:1;
-  opacity:.96;
-}
-.ad-preview-shade{
-  position:absolute;
-  inset:0;
-  z-index:2;
-  pointer-events:none;
-  background:linear-gradient(to bottom,rgba(255,250,240,.04),rgba(255,250,240,.10));
-}
-.ad-content{
-  z-index:3 !important;
-  background:rgba(255,250,240,.88);
-  border:1px solid rgba(203,185,232,.75);
-  border-radius:14px;
-  padding:10px 14px;
-  left:10%;
-  right:10%;
-  width:auto;
-  box-sizing:border-box;
-  box-shadow:0 8px 25px rgba(72,48,110,.12);
-}
-.board.active .ad-website-preview{
-  display:block;
-}
-.board.active .ad-preview-shade{
-  display:block;
-}
+.ad-content.has-logo{top:62%;}
+.ad-content.has-logo .ad-product-name{margin-top:4px;}
+.ad-content.has-logo .ad-product-url{margin-top:5px;}
+@media(max-width:430px){.ad-brand-logo{width:46px;height:46px;border-radius:13px;padding:6px}.ad-content.has-logo{top:64%;}}
+body.dark-mode .ad-brand-logo{background:#15181e;border-color:#4a405f;}
 
+.mini-brand-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:11px;object-fit:contain;padding:5px;background:#fffaf0;border:1px solid #cbb9e8;z-index:2;}.all-ad-card .mini-plus{top:65%;}.all-ad-card .mini-days{z-index:3;}body.dark-mode .mini-brand-logo{background:#15181e;border-color:#4a405f;}
 </style>
 </head>
 <body>
-<!-- AdBoard Live Stats -->
-<div id="adboardLiveStats" class="adboard-live-stats" aria-live="polite">
-  <div class="live-stat"><span class="live-dot"></span><span>Online Now:</span> <strong id="onlineNowCount">0</strong></div>
-  <div class="live-stat"><span>Visitors:</span> <strong id="totalVisitorsCount">0</strong></div>
-</div>
-<style>
-.adboard-live-stats{
-  display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
-  margin:10px auto 16px;padding:8px 12px;
-  font-size:13px;
-}
-.live-stat{
-  padding:7px 12px;border:1px solid rgba(120,95,170,.22);
-  border-radius:999px;background:rgba(255,255,255,.72);
-}
-.live-dot{
-  display:inline-block;width:8px;height:8px;border-radius:50%;
-  background:#36a269;margin-right:6px;vertical-align:1px;
-}
-.board-click-count{
-  position:absolute;right:10px;bottom:8px;z-index:6;
-  font-size:12px;font-weight:700;padding:4px 8px;border-radius:999px;
-  background:rgba(255,255,255,.92);color:#5f4a86;
-  border:1px solid rgba(120,95,170,.22);pointer-events:none;
-}
-.dark-mode .live-stat,.dark-mode .board-click-count,
-body.dark-mode .live-stat,body.dark-mode .board-click-count{
-  background:rgba(35,31,45,.92);color:#eee;
-}
-</style>
-
 <div class="container">
 <nav>
   <div class="logo">Ad<span>Board</span></div>
@@ -2243,7 +2177,6 @@ const boardPricing = {"1":[2100,3500,4100],"2":[1900,3300,3900],"3":[1600,3000,3
 let currentBoard = 1;
 let currentCategory = "";
 let selectedViewCategory = "ALL";
-let viewBoardMap = new Map();
 const categories = ['X', 'Instagram', 'Facebook', 'YouTube', 'School', 'Hospital', 'Website', 'App', 'E-commerce', 'Restaurant', 'Hotel', 'Business', 'Education', 'Software / SaaS', 'Local Business', 'Real Estate', 'Automobile', 'Jobs / Career', 'Gaming', 'Music', 'Entertainment', 'News / Media', 'Courses', 'Fitness', 'Beauty', 'Fashion', 'Services', 'Startup', 'Other'];
 
 const SUPABASE_URL = "https://tbgwpkoccupepkvbqebs.supabase.co";
@@ -2330,6 +2263,20 @@ function displayAdUrl(ad){
   return url;
 }
 
+function getAdLogoUrl(ad){
+  const url = adUrl(ad);
+  if(!url) return "";
+  try{
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./i, "").toLowerCase();
+    if(host === "x.com" || host === "twitter.com") return "https://abs.twimg.com/favicons/twitter.3.ico";
+    if(host === "instagram.com") return "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png";
+    if(host === "facebook.com") return "https://www.facebook.com/images/fb_icon_325x325.png";
+    if(host === "youtube.com") return "https://www.youtube.com/s/desktop/12c4b4f1/img/favicon_144x144.png";
+    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u.origin)}&sz=128`;
+  }catch(e){ return ""; }
+}
+
 function displayHandle(ad){
   const url = adUrl(ad);
   if(!url) return "";
@@ -2345,128 +2292,6 @@ function displayHandle(ad){
   }catch(e){}
   return "";
 }
-
-
-/* ---------- Live click + visitor statistics ---------- */
-const AD_CLICK_RPC = "record_ad_click";
-const VISITOR_HEARTBEAT_MS = 15000;
-const VISITOR_STALE_MS = 45000;
-let visitorSessionId = null;
-let visitorHeartbeatTimer = null;
-let visitorChannel = null;
-
-function getVisitorSessionId(){
-  if(visitorSessionId) return visitorSessionId;
-  try{
-    const key = "adboard_visitor_session";
-    let id = sessionStorage.getItem(key);
-    if(!id){
-      id = (crypto && crypto.randomUUID) ? crypto.randomUUID() :
-        ("v-" + Date.now() + "-" + Math.random().toString(36).slice(2));
-      sessionStorage.setItem(key,id);
-    }
-    visitorSessionId = id;
-    return id;
-  }catch(e){
-    visitorSessionId = "v-" + Date.now() + "-" + Math.random().toString(36).slice(2);
-    return visitorSessionId;
-  }
-}
-
-function updateLiveStat(id,value){
-  const el=document.getElementById(id);
-  if(el) el.textContent = Number.isFinite(Number(value)) ? Number(value).toLocaleString() : "0";
-}
-
-async function registerVisitorHeartbeat(){
-  if(!supabaseClient) return;
-  const sid=getVisitorSessionId();
-  try{
-    const {data,error}=await supabaseClient.rpc("visitor_heartbeat",{p_session_id:sid});
-    if(error) throw error;
-    if(data && typeof data==="object"){
-      updateLiveStat("onlineNowCount",data.online_now);
-      updateLiveStat("totalVisitorsCount",data.total_visitors);
-    }
-  }catch(e){
-    console.debug("Visitor heartbeat unavailable:",e);
-  }
-}
-
-function startVisitorHeartbeat(){
-  if(visitorHeartbeatTimer) return;
-  registerVisitorHeartbeat();
-  visitorHeartbeatTimer=setInterval(registerVisitorHeartbeat,VISITOR_HEARTBEAT_MS);
-  window.addEventListener("beforeunload",()=>{
-    try{
-      if(supabaseClient) supabaseClient.rpc("visitor_leave",{p_session_id:getVisitorSessionId()});
-    }catch(e){}
-  },{once:true});
-}
-
-async function refreshLiveStats(){
-  if(!supabaseClient) return;
-  try{
-    const {data,error}=await supabaseClient.rpc("get_live_stats");
-    if(error) throw error;
-    if(data && typeof data==="object"){
-      updateLiveStat("onlineNowCount",data.online_now);
-      updateLiveStat("totalVisitorsCount",data.total_visitors);
-    }
-  }catch(e){}
-}
-
-async function recordBoardClick(ad){
-  if(!ad) return;
-  const category=ad.category || selectedViewCategory || "";
-  const boardNumber=Number(ad.board_number ?? ad.board ?? ad.actualBoard ?? 0);
-  if(!category || !boardNumber) return;
-
-  try{
-    if(supabaseClient){
-      const {data,error}=await supabaseClient.rpc(AD_CLICK_RPC,{
-        p_category:category,
-        p_board_number:boardNumber
-      });
-      if(error) throw error;
-
-      // RPC may return the updated click count.
-      const count = (typeof data==="number") ? data :
-        (data && (data.clicks ?? data.click_count));
-      if(Number.isFinite(Number(count))){
-        ad.clicks=Number(count);
-        return Number(count);
-      }
-    }
-  }catch(e){
-    console.debug("Click counter RPC unavailable:",e);
-  }
-
-  // Safe fallback for preview/testing when RPC isn't installed yet.
-  try{
-    const key="adboard_clicks_"+category+"_"+boardNumber;
-    const count=Number(localStorage.getItem(key)||0)+1;
-    localStorage.setItem(key,String(count));
-    ad.clicks=count;
-    return count;
-  }catch(e){}
-  return Number(ad.clicks||0);
-}
-
-function showBoardClickCount(n,ad){
-  const board=document.querySelector(`[data-board="${n}"]`);
-  if(!board) return;
-  const zone=board.querySelector(".ad-zone");
-  if(!zone) return;
-  let badge=zone.querySelector(".board-click-count");
-  if(!badge){
-    badge=document.createElement("div");
-    badge.className="board-click-count";
-    zone.appendChild(badge);
-  }
-  badge.textContent="Clicks: "+Number(ad?.clicks||0).toLocaleString();
-}
-
 
 async function loadAdsFromSupabase(){
   if(!supabaseClient){
@@ -2508,24 +2333,16 @@ function showSupabaseError(e){
 }
 
 function openAd(n){
-  const displayBoard = Number(n);
-  currentBoard = displayBoard;
-
-  // In a filtered category view, active ads may have been compacted to Board 1,
-  // Board 2, ... even when their database board number is different. When a
-  // user clicks an empty visual board, let them choose the category and claim
-  // the first genuinely available board in that category.
-  const mapped = viewBoardMap.get(displayBoard);
-  if(mapped && mapped.mode === "active") return;
-
-  document.getElementById("selectedBoard").textContent = displayBoard;
+  currentBoard = n;
+  document.getElementById("selectedBoard").textContent = n;
   document.getElementById("notice").style.display = "none";
   document.getElementById("productName").value = "";
   document.getElementById("productUrl").value = "";
   document.getElementById("productHandle").value = "";
-
   currentCategory = selectedViewCategory !== "ALL" ? selectedViewCategory : "";
-  document.getElementById("chosenCategory").textContent = currentCategory || "Choose a Category";
+  if(selectedViewCategory === "ALL" && n === 1) currentCategory = "__MAIN__";
+  document.getElementById("chosenCategory").textContent =
+    currentCategory === "__MAIN__" ? "Main Homepage · Permanent" : (currentCategory || "Choose a Category");
   document.getElementById("adModal").classList.add("show");
 }
 function closeAll(){
@@ -2560,27 +2377,15 @@ function resetBoard(board){
   const days = board.querySelector(".ad-days");
   const zone = board.querySelector(".ad-zone");
   const btn = board.querySelector(".claim");
-
-  // Completely clear the previous category/view from this board.
   if(cat) cat.textContent = "";
   if(days) days.textContent = "";
-  if(zone){
-    zone.querySelectorAll(".ad-website-preview,.ad-preview-shade,.ad-content").forEach(el => el.remove());
-    zone.title = "";
-    zone.onclick = null;
-    const plus = zone.querySelector(".ad-plus");
-    if(plus) plus.style.display = "";
-  }
-  if(btn){
-    btn.textContent = `Claim Board ${board.dataset.board}`;
-    btn.disabled = false;
-  }
+  if(zone){ zone.title = ""; zone.onclick = null; }
+  if(btn){ btn.textContent = `Claim Board ${board.dataset.board}`; btn.disabled = false; }
 }
 function setBoardActive(n, ad){
   const board = document.querySelector(`[data-board="${n}"]`);
   if(!board) return;
   board.classList.add("active");
-
   const catEl = board.querySelector(".board-category");
   if(catEl) catEl.textContent = ad.category || "ACTIVE";
 
@@ -2591,50 +2396,32 @@ function setBoardActive(n, ad){
 
   const zone = board.querySelector(".ad-zone");
   const url = adUrl(ad);
-
   if(zone){
-    zone.querySelectorAll(".ad-website-preview,.ad-preview-shade,.ad-content").forEach(el => el.remove());
-
-    const iframe = document.createElement("iframe");
-    iframe.className = "ad-website-preview";
-    iframe.src = url || "about:blank";
-    iframe.loading = "lazy";
-    iframe.setAttribute("title", `Preview of ${displayAdLabel(ad)}`);
-    iframe.setAttribute("sandbox", "allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts");
-    zone.appendChild(iframe);
-
-    const shade = document.createElement("div");
-    shade.className = "ad-preview-shade";
-    zone.appendChild(shade);
+    const oldContent = zone.querySelector(".ad-content");
+    if(oldContent) oldContent.remove();
+    const oldLogo = zone.querySelector(".ad-brand-logo");
+    if(oldLogo) oldLogo.remove();
+    const logoUrl = getAdLogoUrl(ad);
+    if(logoUrl){
+      const img = document.createElement("img");
+      img.className = "ad-brand-logo";
+      img.alt = "";
+      img.loading = "lazy";
+      img.referrerPolicy = "no-referrer";
+      img.src = logoUrl;
+      img.onerror = () => img.remove();
+      zone.appendChild(img);
+    }
 
     const content = document.createElement("div");
     content.className = "ad-content";
-
-    const nameLink = document.createElement("a");
-    nameLink.className = "ad-product-name ad-click-link";
-    nameLink.textContent = displayAdLabel(ad);
-    nameLink.href = url || "#";
-    nameLink.target = "_blank";
-    nameLink.rel = "noopener noreferrer";
-    nameLink.addEventListener("click", async (event) => {
-  event.stopPropagation();
-  const count = await recordBoardClick(ad);
-  if(Number.isFinite(Number(count))) showBoardClickCount(n,ad);
-});
-
-    const link = document.createElement("a");
-    link.className = "ad-product-url ad-click-link";
+    const name = document.createElement("div");
+    name.className = "ad-product-name";
+    name.textContent = displayAdLabel(ad);
+    const link = document.createElement("div");
+    link.className = "ad-product-url";
     link.textContent = destinationLabel;
-    link.href = url || "#";
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.addEventListener("click", async (event) => {
-  event.stopPropagation();
-  const count = await recordBoardClick(ad);
-  if(Number.isFinite(Number(count))) showBoardClickCount(n,ad);
-});
-
-    content.appendChild(nameLink);
+    content.appendChild(name);
     if(destinationLabel) content.appendChild(link);
     zone.appendChild(content);
 
@@ -2642,100 +2429,31 @@ function setBoardActive(n, ad){
     if(plus) plus.style.display = "none";
 
     zone.title = `Open ${displayAdLabel(ad)}`;
-    zone.onclick = async (event) => {
-    // Direct link clicks on the name/URL anchors are handled below; this handler
-    // covers the clickable ad area itself.
-    if(event && event.target && event.target.closest && event.target.closest(".ad-click-link")) return;
-    const count = await recordBoardClick(ad);
-    if(Number.isFinite(Number(count))) showBoardClickCount(n,ad);
-    openDestination(url);
-  };
-
-    iframe.addEventListener("error", () => {
-      iframe.style.display = "none";
-    });
+    zone.onclick = () => openDestination(url);
   }
-
   const btn = board.querySelector(".claim");
   if(btn){ btn.textContent = "Advertisement Active"; btn.disabled = true; }
 }
-function getCategoryAds(category){
-  const ads = [];
-  for(let n = 1; n <= 100; n++){
-    const ad = getAd(category, n);
-    if(ad) ads.push({actualBoard:n, ad});
-  }
-  return ads;
-}
-
-function getAllActiveCategoryAds(){
-  const all = [];
-  categories.forEach(category => {
-    getCategoryAds(category).forEach(item => {
-      all.push({category, actualBoard:item.actualBoard, ad:item.ad});
-    });
-  });
-  return all;
-}
-
 function renderCurrentCategory(){
   const boards = [...document.querySelectorAll(".board[data-board]")];
   boards.forEach(resetBoard);
-  viewBoardMap = new Map();
-
   const physical = document.getElementById("boardsPhysicalView");
   const allView = document.getElementById("allCategoriesView");
-  if(physical) physical.style.display = "block";
-  if(allView) allView.style.display = "none";
-
   if(selectedViewCategory === "ALL"){
-    // ALL CATEGORIES = one combined marketplace. Every active ad from every
-    // category is packed into the visible boards from Board 1 onward.
-    const activeAds = getAllActiveCategoryAds();
-    activeAds.slice(0, 100).forEach((item, index) => {
-      const displayBoard = index + 1;
-      viewBoardMap.set(displayBoard, {
-        mode: "active",
-        category: item.category,
-        actualBoard: item.actualBoard,
-        ad: item.ad
-      });
-      setBoardActive(displayBoard, item.ad);
-      const cat = document.querySelector(`[data-board="${displayBoard}"] .board-category`);
-      if(cat) cat.textContent = item.category;
-    });
-
-    // The remaining visible boards are claimable. A visual board maps to the
-    // lowest unused board number in its selected category after a category is
-    // chosen in the claim modal.
-    boards.forEach(board => {
-      const n = Number(board.dataset.board);
-      if(!viewBoardMap.has(n)){
-        viewBoardMap.set(n, {mode:"empty"});
-      }
-    });
+    if(physical) physical.style.display = "block";
+    if(allView) allView.style.display = "grid";
+    const mainAd = getMainBoard1();
+    if(mainAd) setBoardActive(1, mainAd);
+    renderAllCategories();
   } else {
-    // CATEGORY VIEW = show that category's active ads packed from Board 1.
-    // Example: X's database Board 2 appears visually as Board 1 here.
-    const activeAds = getCategoryAds(selectedViewCategory);
-    activeAds.forEach((item, index) => {
-      const displayBoard = index + 1;
-      viewBoardMap.set(displayBoard, {
-        mode: "active",
-        category: selectedViewCategory,
-        actualBoard: item.actualBoard,
-        ad: item.ad
-      });
-      setBoardActive(displayBoard, item.ad);
-      const cat = document.querySelector(`[data-board="${displayBoard}"] .board-category`);
-      if(cat) cat.textContent = selectedViewCategory;
-    });
-    boards.forEach(board => {
-      const n = Number(board.dataset.board);
-      if(!viewBoardMap.has(n)) viewBoardMap.set(n, {mode:"empty"});
+    if(physical) physical.style.display = "block";
+    if(allView) allView.style.display = "none";
+    boards.forEach(b => {
+      const n = Number(b.dataset.board);
+      const ad = getAd(selectedViewCategory, n);
+      if(ad) setBoardActive(n, ad);
     });
   }
-
   const title = document.getElementById("categoryViewTitle");
   if(title) title.textContent = selectedViewCategory === "ALL"
     ? "All Categories · 100 Advertisement Boards"
@@ -2743,13 +2461,59 @@ function renderCurrentCategory(){
   const filter = document.getElementById("boardCategoryFilter");
   if(filter) filter.value = selectedViewCategory;
 }
-
 function renderAllCategories(){
-  // Kept for backward compatibility with older calls. The ALL view is now
-  // rendered directly in the same 100-board marketplace as category views.
-  renderCurrentCategory();
+  const box = document.getElementById("allCategoriesView");
+  if(!box) return;
+  box.innerHTML = "";
+  let total = 0;
+  const mainAd = getMainBoard1();
+  if(mainAd){
+    const mainSection = document.createElement("section");
+    mainSection.className = "all-cat-section";
+    const handle = displayHandle(mainAd);
+    mainSection.innerHTML = `<div class="all-cat-head">
+      <div class="all-cat-name">Main Homepage · Board 1</div>
+      <div class="all-cat-count">PERMANENT</div>
+    </div><div class="all-cat-grid"></div>`;
+    const grid = mainSection.querySelector(".all-cat-grid");
+    const card = document.createElement("div");
+    card.className = "all-ad-card";
+    const logo = getAdLogoUrl(mainAd);
+    card.innerHTML = `<div class="mini-top"><span>BOARD 1</span><span>PERMANENT</span></div>
+      ${logo ? `<img class="mini-brand-logo" src="${logo}" alt="" referrerpolicy="no-referrer">` : ""}
+      <div class="mini-plus">＋</div><div class="mini-days">${handle || "PERMANENT"}</div>`;
+    card.onclick = () => openDestination(adUrl(mainAd));
+    grid.appendChild(card);
+    box.appendChild(mainSection);
+  }
+  categories.forEach(c => {
+    const ads = [];
+    for(let n = 1; n <= 100; n++){
+      const ad = getAd(c, n);
+      if(ad) ads.push({board:n, ad});
+    }
+    if(!ads.length) return;
+    total += ads.length;
+    const section = document.createElement("section");
+    section.className = "all-cat-section";
+    section.innerHTML = `<div class="all-cat-head"><div class="all-cat-name">${c}</div><div class="all-cat-count">${ads.length} active advertisement${ads.length===1?"":"s"}</div></div><div class="all-cat-grid"></div>`;
+    const grid = section.querySelector(".all-cat-grid");
+    ads.forEach(({board, ad}) => {
+      const card = document.createElement("div");
+      card.className = "all-ad-card";
+      const handle = displayHandle(ad);
+      const logo = getAdLogoUrl(ad);
+      card.innerHTML = `<div class="mini-top"><span>BOARD ${board}</span><span>${c}</span></div>${logo ? `<img class="mini-brand-logo" src="${logo}" alt="" referrerpolicy="no-referrer">` : ""}<div class="mini-plus">＋</div><div class="mini-days">${handle || "ACTIVE"}</div>`;
+      card.title = handle || "Open advertisement";
+      card.onclick = () => openDestination(adUrl(ad));
+      grid.appendChild(card);
+    });
+    box.appendChild(section);
+  });
+  if(!total && !mainAd){
+    box.innerHTML = '<div class="all-cat-section" style="text-align:center;color:var(--muted);padding:45px 20px"><div style="font-size:22px;font-weight:950;color:var(--text);margin-bottom:8px">No advertisements yet</div><div>Choose any category and claim a free board to appear here.</div></div>';
+  }
 }
-
 function changeBoardCategory(c){
   selectedViewCategory = c;
   renderCurrentCategory();
@@ -2778,24 +2542,18 @@ async function submitAd(){
   }
   if(!supabaseClient){ showSupabaseConfigWarning(); return; }
   notice.style.display = "none";
+  const isMainPermanent = (currentCategory === "__MAIN__" && currentBoard === 1);
   try{
-    // Display boards are compacted views. Always claim the lowest free
-    // database board in the chosen category so a filtered view never tries
-    // to overwrite an existing ad that was originally on Board 2, 3, etc.
-    let targetBoard = 1;
-    const usedBoards = new Set(getCategoryAds(currentCategory).map(x => x.actualBoard));
-    while(usedBoards.has(targetBoard) && targetBoard <= 100) targetBoard++;
-    if(targetBoard > 100){
-      notice.textContent = `All 100 boards in ${currentCategory} are already active.`;
-      notice.style.display = "block";
-      return;
-    }
-    const result = await supabaseClient.rpc("claim_ad", {p_category:currentCategory, p_board_number:targetBoard, p_product_name:name, p_destination_url:resolved.url});
+    const result = isMainPermanent
+      ? await supabaseClient.rpc("claim_main_board1", {p_product_name:name, p_destination_url:resolved.url})
+      : await supabaseClient.rpc("claim_ad", {p_category:currentCategory, p_board_number:Number(currentBoard), p_product_name:name, p_destination_url:resolved.url});
     if(result.error) throw result.error;
     await loadAdsFromSupabase();
-    selectedViewCategory = currentCategory;
+    selectedViewCategory = isMainPermanent ? "ALL" : currentCategory;
     renderCurrentCategory();
-    notice.textContent = `Advertisement is now active in ${currentCategory}. It appears at the next available position in that category and in the combined All Categories view.`;
+    notice.textContent = isMainPermanent
+      ? "Main Homepage Board 1 is now active permanently. It will not be removed by the 3-day rotation."
+      : `Board ${currentBoard} is FREE and active in ${currentCategory}. Every 3 days, the top 1/3 of claimed boards will rotate out and lower ads will move up automatically.`;
     notice.style.display = "block";
   }catch(e){
     console.error("AdBoard claim error:", e);
@@ -2897,9 +2655,6 @@ function toggleDarkMode(){
   applyDarkMode(enabled);
 })();
 
-
-startVisitorHeartbeat();
-refreshLiveStats();
 </script>
 </body>
 </html>
