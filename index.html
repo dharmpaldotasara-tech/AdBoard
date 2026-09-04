@@ -2270,7 +2270,7 @@ function getAdLogoUrl(ad){
     const u = new URL(url);
     const host = u.hostname.replace(/^www\./i, "").toLowerCase();
     if(host === "x.com" || host === "twitter.com") return "https://abs.twimg.com/favicons/twitter.3.ico";
-    if(host === "instagram.com") return "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png";
+    if(host === "instagram.com") return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><linearGradient id="g" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".25" stop-color="#fa7e1e"/><stop offset=".5" stop-color="#d62976"/><stop offset=".75" stop-color="#962fbf"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect x="7" y="7" width="114" height="114" rx="30" fill="url(#g)"/><rect x="31" y="31" width="66" height="66" rx="19" fill="none" stroke="white" stroke-width="9"/><circle cx="64" cy="64" r="16" fill="none" stroke="white" stroke-width="9"/><circle cx="91" cy="37" r="6" fill="white"/></svg>`);
     if(host === "facebook.com") return "https://www.facebook.com/images/fb_icon_325x325.png";
     if(host === "youtube.com") return "https://www.youtube.com/s/desktop/12c4b4f1/img/favicon_144x144.png";
     return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(u.origin)}&sz=128`;
@@ -2470,6 +2470,12 @@ function renderCurrentCategory(){
   } else {
     if(physical) physical.style.display = "block";
     if(allView) allView.style.display = "none";
+
+    // CATEGORY VIEW: show ONLY advertisements belonging to the selected
+    // category. The permanent homepage Board #1 is intentionally NOT
+    // injected here because it belongs only to the main homepage/ALL view.
+    // This prevents an Instagram/X ad from appearing when another category
+    // is selected and preserves the real board numbers within that category.
     boards.forEach(b => {
       const n = Number(b.dataset.board);
       const ad = getAd(selectedViewCategory, n);
