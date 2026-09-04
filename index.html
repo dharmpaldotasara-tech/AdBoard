@@ -864,7 +864,7 @@ body.dark-mode .ad-brand-logo{background:#15181e;border-color:#4a405f;}
   <div class="board-filter">
     <div>
       <div class="filter-title">Browse by Category</div>
-      <div class="filter-subtitle">Select a category to see its complete 100-board marketplace.</div>
+      <div class="filter-subtitle">Select a category to see its complete advertisement marketplace.</div>
     </div>
     <select id="boardCategoryFilter" class="category-filter" onchange="changeBoardCategory(this.value)">
       <option value="ALL">All Categories</option>
@@ -899,7 +899,7 @@ body.dark-mode .ad-brand-logo{background:#15181e;border-color:#4a405f;}
       <option value="Other">Other</option>
     </select>
   </div>
-  <div id="categoryViewTitle" class="category-view-title">All Categories · 100 Advertisement Boards</div>
+  <div id="categoryViewTitle" class="category-view-title">All Categories</div>
   <div id="boardsPhysicalView">
     <div class="featured-row">
 <article class="board" data-board="2">
@@ -2414,7 +2414,16 @@ function resetBoard(board){
   const btn = board.querySelector(".claim");
   if(cat) cat.textContent = "";
   if(days) days.textContent = "";
-  if(zone){ zone.title = ""; zone.onclick = null; }
+  if(zone){
+    zone.title = "";
+    zone.onclick = null;
+    // Remove dynamically injected advertisement content from the previous
+    // category. Without this, an old Instagram/X ad can remain visible
+    // after switching categories even though the new data is correct.
+    zone.querySelectorAll(".ad-content, .ad-brand-logo").forEach(el => el.remove());
+    const plus = zone.querySelector(".ad-plus");
+    if(plus) plus.style.display = "block";
+  }
   if(btn){ btn.textContent = `Claim Board ${board.dataset.board}`; btn.disabled = false; }
 }
 function setBoardActive(n, ad){
@@ -2478,7 +2487,6 @@ function renderCurrentCategory(){
     if(physical) physical.style.display = "block";
     if(allView) allView.style.display = "grid";
 
-    // ALL CATEGORIES: show real active ads in the visible 100-board marketplace.
     // Keep the permanent homepage Board #1 at the top when it exists, then fill
     // the remaining boards with active category ads in category/board order.
     const allAds = [];
@@ -2523,8 +2531,8 @@ function renderCurrentCategory(){
   }
   const title = document.getElementById("categoryViewTitle");
   if(title) title.textContent = selectedViewCategory === "ALL"
-    ? "All Categories · 100 Advertisement Boards"
-    : `${selectedViewCategory} · 100 Advertisement Boards`;
+    ? "All Categories"
+    : selectedViewCategory;
   const filter = document.getElementById("boardCategoryFilter");
   if(filter) filter.value = selectedViewCategory;
 }
