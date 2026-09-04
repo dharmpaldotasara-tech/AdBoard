@@ -828,18 +828,18 @@ body.dark-mode .dark-mode-toggle{
 
 /* ===== Automatic platform / website logo ===== */
 .ad-brand-logo{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
   width:54px;height:54px;border-radius:15px;object-fit:contain;
   z-index:3;pointer-events:none;background:#fffaf0;padding:7px;
   border:1px solid #cbb9e8;box-shadow:0 8px 20px rgba(72,48,110,.12);
 }
-.ad-content.has-logo{top:62%;}
-.ad-content.has-logo .ad-product-name{margin-top:4px;}
+.ad-content.has-logo{top:50%;left:84px;right:14px;text-align:left;}
+.ad-content.has-logo .ad-product-name{margin-top:0;}
 .ad-content.has-logo .ad-product-url{margin-top:5px;}
-@media(max-width:430px){.ad-brand-logo{width:46px;height:46px;border-radius:13px;padding:6px}.ad-content.has-logo{top:64%;}}
+@media(max-width:430px){.ad-brand-logo{width:46px;height:46px;border-radius:13px;padding:6px}.ad-content.has-logo{top:50%;left:70px;right:10px;}}
 body.dark-mode .ad-brand-logo{background:#15181e;border-color:#4a405f;}
 
-.mini-brand-logo{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:11px;object-fit:contain;padding:5px;background:#fffaf0;border:1px solid #cbb9e8;z-index:2;}.all-ad-card .mini-plus{top:65%;}.all-ad-card .mini-days{z-index:3;}body.dark-mode .mini-brand-logo{background:#15181e;border-color:#4a405f;}
+.mini-brand-logo{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:11px;object-fit:contain;padding:5px;background:#fffaf0;border:1px solid #cbb9e8;z-index:2;}.all-ad-card .mini-plus{top:65%;}.all-ad-card .mini-days{z-index:3;}body.dark-mode .mini-brand-logo{background:#15181e;border-color:#4a405f;}
 </style>
 </head>
 <body>
@@ -2414,7 +2414,7 @@ function setBoardActive(n, ad){
     }
 
     const content = document.createElement("div");
-    content.className = "ad-content";
+    content.className = "ad-content" + (logoUrl ? " has-logo" : "");
     const name = document.createElement("div");
     name.className = "ad-product-name";
     name.textContent = displayAdLabel(ad);
@@ -2442,8 +2442,30 @@ function renderCurrentCategory(){
   if(selectedViewCategory === "ALL"){
     if(physical) physical.style.display = "block";
     if(allView) allView.style.display = "grid";
+
+    // ALL CATEGORIES: show real active ads in the visible 100-board marketplace.
+    // Keep the permanent homepage Board #1 at the top when it exists, then fill
+    // the remaining boards with active category ads in category/board order.
+    const allAds = [];
+    categories.forEach(c => {
+      for(let n = 1; n <= 100; n++){
+        const ad = getAd(c, n);
+        if(ad) allAds.push(ad);
+      }
+    });
+    allAds.sort((a,b) => String(a.category || "").localeCompare(String(b.category || "")) || Number(a.board_number || 0) - Number(b.board_number || 0));
+
     const mainAd = getMainBoard1();
     if(mainAd) setBoardActive(1, mainAd);
+
+    let visibleBoard = mainAd ? 2 : 1;
+    for(const ad of allAds){
+      if(visibleBoard > 100) break;
+      // Do not duplicate the permanent homepage ad if it is also present elsewhere.
+      if(mainAd && adUrl(ad) === adUrl(mainAd)) continue;
+      setBoardActive(visibleBoard, ad);
+      visibleBoard++;
+    }
     renderAllCategories();
   } else {
     if(physical) physical.style.display = "block";
