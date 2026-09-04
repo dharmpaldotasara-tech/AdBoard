@@ -846,8 +846,14 @@ body.dark-mode .ad-brand-logo{background:#15181e;border-color:#4a405f;}
 .home-traffic-stats{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 auto 20px}
 .home-traffic-stat{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid #c4a8ff;border-radius:10px;background:#e7dcff;color:#2b1758;font-size:12px;font-weight:900}
 .home-traffic-stat b{color:#6338b8}
-.board-clicks{display:flex;justify-content:flex-end;align-items:center;margin-top:7px;font-size:10px;font-weight:900;color:#5d5572}
+.board-clicks{
+  position:absolute;left:8px;bottom:8px;z-index:4;
+  display:flex;align-items:center;
+  margin:0;font-size:10px;font-weight:900;color:#5d5572;
+  pointer-events:none;
+}
 .board-clicks b{color:#6338b8;margin-left:3px}
+
 
 </style>
 </head>
@@ -2423,21 +2429,61 @@ function selectCategory(c){
   document.getElementById("chosenCategory").textContent = c;
   closeCategory();
 }
-async function recordBoardClick(ad){
+async function recordBoardClick(ad, boardElement){
   if(!supabaseClient || !ad) return;
+  const countEl = boardElement ? boardElement.querySelector(".board-click-count") : null;
+  const oldCount = countEl ? Number(countEl.textContent || 0) : 0;
+  if(countEl) countEl.textContent = String(oldCount + 1); // instant local feedback
   try{
     const category = String(ad.category || "").trim();
     const boardNumber = Number(ad.board_number);
     if(category && Number.isFinite(boardNumber)) {
-      await supabaseClient.rpc("increment_ad_click", {p_category:category, p_board_number:boardNumber});
+      const {error} = await supabaseClient.rpc("increment_ad_click", {p_category:category, p_board_number:boardNumber});
+      if(error) throw error;
     } else if(ad.__main_board1){
-      await supabaseClient.rpc("increment_main_board1_click");
+      const {error} = await supabaseClient.rpc("increment_main_board1_click");
+      if(error) throw error;
     }
-  }catch(e){ console.warn("AdBoard click tracking failed", e); }
+    // Pull the authoritative value immediately after the RPC succeeds.
+    await syncAdBoardData();
+  }catch(e){
+    if(countEl) countEl.textContent = String(oldCount); // rollback if RPC failed
+    console.warn("AdBoard click tracking failed", e);
+  }
 }
-function openDestination(url, ad){
-  if(ad) recordBoardClick(ad);
+function openDestination(url, ad, boardElement){
+  if(ad) recordBoardClick(ad, boardElement);
   try{ if(url) window.open(url, "_blank", "noopener,noreferrer"); }catch(e){}
+}
+
+let adboardRealtimeChannel = null;
+let adboardSyncTimer = null;
+async function syncAdBoardData(){
+  if(!supabaseClient) return;
+  try{
+    const ok = await loadAdsFromSupabase();
+    if(ok) renderCurrentCategory();
+  }catch(e){ console.warn("AdBoard live sync failed", e); }
+}
+function initAdBoardRealtime(){
+  if(!supabaseClient || adboardRealtimeChannel) return;
+  try{
+    adboardRealtimeChannel = supabaseClient
+      .channel("adboard-live-updates")
+      .on("postgres_changes", {event:"*", schema:"public", table:"adboard_ads"}, () => {
+        clearTimeout(adboardSyncTimer);
+        adboardSyncTimer = setTimeout(syncAdBoardData, 150);
+      })
+      .on("postgres_changes", {event:"*", schema:"public", table:"adboard_main_board1"}, () => {
+        clearTimeout(adboardSyncTimer);
+        adboardSyncTimer = setTimeout(syncAdBoardData, 150);
+      })
+      .subscribe((status) => {
+        if(status === "CHANNEL_ERROR" || status === "TIMED_OUT"){
+          console.warn("AdBoard realtime unavailable; 5-second fallback sync remains active.");
+        }
+      });
+  }catch(e){ console.warn("AdBoard realtime init failed", e); }
 }
 function resetBoard(board){
   board.classList.remove("active");
@@ -2510,7 +2556,7 @@ function setBoardActive(n, ad){
     if(plus) plus.style.display = "none";
 
     zone.title = `Open ${displayAdLabel(ad)}`;
-    zone.onclick = () => openDestination(url, ad);
+    zone.onclick = () => openDestination(url, ad, board);
   }
   const btn = board.querySelector(".claim");
   if(btn){ btn.textContent = "Advertisement Active"; btn.disabled = true; }
@@ -2727,7 +2773,12 @@ async function refreshHomeTraffic(){
   }catch(e){ console.warn("AdBoard traffic stats failed",e); }
 }
 refreshHomeTraffic();
-setInterval(refreshHomeTraffic, 60000);
+setInterval(refreshHomeTraffic, 5000);
+
+// Realtime is the primary path for board updates. A 5-second sync is kept as
+// a fallback so the page still updates when Realtime is unavailable.
+initAdBoardRealtime();
+setInterval(syncAdBoardData, 5000);
 
 const legalPages = {
   terms: `
@@ -2791,7 +2842,7 @@ function closeLegal(){
   document.body.style.overflow = "";
 }
 initCategoryFilter();
-loadAdsFromSupabase().then(() => renderCurrentCategory());
+loadAdsFromSupabase().then(() => { renderCurrentCategory(); initAdBoardRealtime(); });
 
 function applyDarkMode(enabled){
   document.body.classList.toggle("dark-mode", enabled);
