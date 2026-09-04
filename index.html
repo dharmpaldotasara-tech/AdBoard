@@ -842,22 +842,12 @@ body.dark-mode .ad-brand-logo{background:#15181e;border-color:#4a405f;}
 
 .mini-brand-logo{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:42px;height:42px;border-radius:11px;object-fit:contain;padding:5px;background:#fffaf0;border:1px solid #cbb9e8;z-index:2;}.all-ad-card .mini-plus{top:65%;}.all-ad-card .mini-days{z-index:3;}body.dark-mode .mini-brand-logo{background:#15181e;border-color:#4a405f;}
 
-/* ===== Homepage Stats: Clicks / Visitors / Online ===== */
-.home-stats{
-  display:flex;justify-content:center;align-items:center;gap:12px;
-  flex-wrap:wrap;margin:0 auto 22px;padding:12px 16px;
-  width:min(720px,100%);border:1px solid #c4a8ff;border-radius:16px;
-  background:#e7dcff;box-shadow:0 10px 28px rgba(91,60,145,.10);
-}
-.home-stat{
-  display:inline-flex;align-items:center;gap:6px;padding:6px 10px;
-  border-radius:10px;background:#fffaf0;color:#2b1758;
-  border:1px solid #cbb9e8;font-size:12px;font-weight:850;
-}
-.home-stat b{color:#6338b8}
-body.dark-mode .home-stats{background:#1b1f27;border-color:#4a405f}
-body.dark-mode .home-stat{background:#15181e;border-color:#4a405f;color:#eadfff}
-body.dark-mode .home-stat b{color:#d4c0ff}
+/* ===== AdBoard analytics ===== */
+.home-traffic-stats{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:0 auto 20px}
+.home-traffic-stat{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:1px solid #c4a8ff;border-radius:10px;background:#e7dcff;color:#2b1758;font-size:12px;font-weight:900}
+.home-traffic-stat b{color:#6338b8}
+.board-clicks{display:flex;justify-content:flex-end;align-items:center;margin-top:7px;font-size:10px;font-weight:900;color:#5d5572}
+.board-clicks b{color:#6338b8;margin-left:3px}
 
 </style>
 </head>
@@ -878,13 +868,10 @@ body.dark-mode .home-stat b{color:#d4c0ff}
     <button class="primary" onclick="document.getElementById('boards').scrollIntoView()">Explore Advertisement Boards ↓</button>
   </div>
 </section>
-
-
-  <div class="home-stats" id="homeStats" aria-label="AdBoard statistics">
-    <span class="home-stat">Clicks <b id="homeClicks">0</b></span>
-    <span class="home-stat">Visitors <b id="homeVisitors">0</b></span>
-    <span class="home-stat">Online <b id="homeOnline">0</b></span>
-  </div>
+<div class="home-traffic-stats" id="homeTrafficStats" aria-label="AdBoard traffic statistics">
+  <span class="home-traffic-stat">Visitors <b id="homeVisitors">0</b></span>
+  <span class="home-traffic-stat">🟢 Online <b id="homeOnline">0</b></span>
+</div>
 
 <section id="boards" class="board-area">
   <div class="board-filter">
@@ -936,7 +923,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(2)">Claim Board 2</button>
 </article>
@@ -948,7 +935,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(1)">Claim Board 1</button>
 </article>
@@ -960,7 +947,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(3)">Claim Board 3</button>
 </article>
@@ -974,7 +961,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(4)">Claim Board 4</button>
 </article>
@@ -986,7 +973,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(5)">Claim Board 5</button>
 </article>
@@ -998,7 +985,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(6)">Claim Board 6</button>
 </article>
@@ -1010,7 +997,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(7)">Claim Board 7</button>
 </article>
@@ -1022,7 +1009,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(8)">Claim Board 8</button>
 </article>
@@ -1034,7 +1021,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(9)">Claim Board 9</button>
 </article>
@@ -1046,7 +1033,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(10)">Claim Board 10</button>
 </article>
@@ -1058,7 +1045,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(11)">Claim Board 11</button>
 </article>
@@ -1070,7 +1057,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(12)">Claim Board 12</button>
 </article>
@@ -1082,7 +1069,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(13)">Claim Board 13</button>
 </article>
@@ -1094,7 +1081,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(14)">Claim Board 14</button>
 </article>
@@ -1106,7 +1093,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(15)">Claim Board 15</button>
 </article>
@@ -1118,7 +1105,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(16)">Claim Board 16</button>
 </article>
@@ -1130,7 +1117,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(17)">Claim Board 17</button>
 </article>
@@ -1142,7 +1129,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(18)">Claim Board 18</button>
 </article>
@@ -1154,7 +1141,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(19)">Claim Board 19</button>
 </article>
@@ -1166,7 +1153,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(20)">Claim Board 20</button>
 </article>
@@ -1178,7 +1165,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(21)">Claim Board 21</button>
 </article>
@@ -1190,7 +1177,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(22)">Claim Board 22</button>
 </article>
@@ -1202,7 +1189,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(23)">Claim Board 23</button>
 </article>
@@ -1214,7 +1201,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(24)">Claim Board 24</button>
 </article>
@@ -1226,7 +1213,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(25)">Claim Board 25</button>
 </article>
@@ -1238,7 +1225,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(26)">Claim Board 26</button>
 </article>
@@ -1250,7 +1237,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(27)">Claim Board 27</button>
 </article>
@@ -1262,7 +1249,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(28)">Claim Board 28</button>
 </article>
@@ -1274,7 +1261,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(29)">Claim Board 29</button>
 </article>
@@ -1286,7 +1273,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(30)">Claim Board 30</button>
 </article>
@@ -1298,7 +1285,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(31)">Claim Board 31</button>
 </article>
@@ -1310,7 +1297,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(32)">Claim Board 32</button>
 </article>
@@ -1322,7 +1309,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(33)">Claim Board 33</button>
 </article>
@@ -1334,7 +1321,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(34)">Claim Board 34</button>
 </article>
@@ -1346,7 +1333,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(35)">Claim Board 35</button>
 </article>
@@ -1358,7 +1345,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(36)">Claim Board 36</button>
 </article>
@@ -1370,7 +1357,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(37)">Claim Board 37</button>
 </article>
@@ -1382,7 +1369,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(38)">Claim Board 38</button>
 </article>
@@ -1394,7 +1381,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(39)">Claim Board 39</button>
 </article>
@@ -1406,7 +1393,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(40)">Claim Board 40</button>
 </article>
@@ -1418,7 +1405,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(41)">Claim Board 41</button>
 </article>
@@ -1430,7 +1417,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(42)">Claim Board 42</button>
 </article>
@@ -1442,7 +1429,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(43)">Claim Board 43</button>
 </article>
@@ -1454,7 +1441,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(44)">Claim Board 44</button>
 </article>
@@ -1466,7 +1453,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(45)">Claim Board 45</button>
 </article>
@@ -1478,7 +1465,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(46)">Claim Board 46</button>
 </article>
@@ -1490,7 +1477,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(47)">Claim Board 47</button>
 </article>
@@ -1502,7 +1489,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(48)">Claim Board 48</button>
 </article>
@@ -1514,7 +1501,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(49)">Claim Board 49</button>
 </article>
@@ -1526,7 +1513,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(50)">Claim Board 50</button>
 </article>
@@ -1538,7 +1525,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(51)">Claim Board 51</button>
 </article>
@@ -1550,7 +1537,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(52)">Claim Board 52</button>
 </article>
@@ -1562,7 +1549,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(53)">Claim Board 53</button>
 </article>
@@ -1574,7 +1561,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(54)">Claim Board 54</button>
 </article>
@@ -1586,7 +1573,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(55)">Claim Board 55</button>
 </article>
@@ -1598,7 +1585,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(56)">Claim Board 56</button>
 </article>
@@ -1610,7 +1597,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(57)">Claim Board 57</button>
 </article>
@@ -1622,7 +1609,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(58)">Claim Board 58</button>
 </article>
@@ -1634,7 +1621,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(59)">Claim Board 59</button>
 </article>
@@ -1646,7 +1633,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(60)">Claim Board 60</button>
 </article>
@@ -1658,7 +1645,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(61)">Claim Board 61</button>
 </article>
@@ -1670,7 +1657,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(62)">Claim Board 62</button>
 </article>
@@ -1682,7 +1669,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(63)">Claim Board 63</button>
 </article>
@@ -1694,7 +1681,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(64)">Claim Board 64</button>
 </article>
@@ -1706,7 +1693,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(65)">Claim Board 65</button>
 </article>
@@ -1718,7 +1705,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(66)">Claim Board 66</button>
 </article>
@@ -1730,7 +1717,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(67)">Claim Board 67</button>
 </article>
@@ -1742,7 +1729,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(68)">Claim Board 68</button>
 </article>
@@ -1754,7 +1741,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(69)">Claim Board 69</button>
 </article>
@@ -1766,7 +1753,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(70)">Claim Board 70</button>
 </article>
@@ -1778,7 +1765,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(71)">Claim Board 71</button>
 </article>
@@ -1790,7 +1777,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(72)">Claim Board 72</button>
 </article>
@@ -1802,7 +1789,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(73)">Claim Board 73</button>
 </article>
@@ -1814,7 +1801,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(74)">Claim Board 74</button>
 </article>
@@ -1826,7 +1813,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(75)">Claim Board 75</button>
 </article>
@@ -1838,7 +1825,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(76)">Claim Board 76</button>
 </article>
@@ -1850,7 +1837,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(77)">Claim Board 77</button>
 </article>
@@ -1862,7 +1849,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(78)">Claim Board 78</button>
 </article>
@@ -1874,7 +1861,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(79)">Claim Board 79</button>
 </article>
@@ -1886,7 +1873,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(80)">Claim Board 80</button>
 </article>
@@ -1898,7 +1885,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(81)">Claim Board 81</button>
 </article>
@@ -1910,7 +1897,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(82)">Claim Board 82</button>
 </article>
@@ -1922,7 +1909,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(83)">Claim Board 83</button>
 </article>
@@ -1934,7 +1921,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(84)">Claim Board 84</button>
 </article>
@@ -1946,7 +1933,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(85)">Claim Board 85</button>
 </article>
@@ -1958,7 +1945,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(86)">Claim Board 86</button>
 </article>
@@ -1970,7 +1957,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(87)">Claim Board 87</button>
 </article>
@@ -1982,7 +1969,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(88)">Claim Board 88</button>
 </article>
@@ -1994,7 +1981,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(89)">Claim Board 89</button>
 </article>
@@ -2006,7 +1993,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(90)">Claim Board 90</button>
 </article>
@@ -2018,7 +2005,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(91)">Claim Board 91</button>
 </article>
@@ -2030,7 +2017,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(92)">Claim Board 92</button>
 </article>
@@ -2042,7 +2029,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(93)">Claim Board 93</button>
 </article>
@@ -2054,7 +2041,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(94)">Claim Board 94</button>
 </article>
@@ -2066,7 +2053,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(95)">Claim Board 95</button>
 </article>
@@ -2078,7 +2065,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(96)">Claim Board 96</button>
 </article>
@@ -2090,7 +2077,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(97)">Claim Board 97</button>
 </article>
@@ -2102,7 +2089,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(98)">Claim Board 98</button>
 </article>
@@ -2114,7 +2101,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(99)">Claim Board 99</button>
 </article>
@@ -2126,7 +2113,7 @@ body.dark-mode .home-stat b{color:#d4c0ff}
   <div class="ad-zone">
     <div class="ad-category"><span class="board-category"></span></div>
     <div class="ad-plus">＋</div>
-    <div class="ad-days"></div>
+    <div class="ad-days"></div><div class="board-clicks">Clicks <b class="board-click-count">0</b></div>
   </div>
   <button class="primary claim" type="button" onclick="openAd(100)">Claim Board 100</button>
 </article>
@@ -2436,17 +2423,32 @@ function selectCategory(c){
   document.getElementById("chosenCategory").textContent = c;
   closeCategory();
 }
-function openDestination(url){
+async function recordBoardClick(ad){
+  if(!supabaseClient || !ad) return;
+  try{
+    const category = String(ad.category || "").trim();
+    const boardNumber = Number(ad.board_number);
+    if(category && Number.isFinite(boardNumber)) {
+      await supabaseClient.rpc("increment_ad_click", {p_category:category, p_board_number:boardNumber});
+    } else if(ad.__main_board1){
+      await supabaseClient.rpc("increment_main_board1_click");
+    }
+  }catch(e){ console.warn("AdBoard click tracking failed", e); }
+}
+function openDestination(url, ad){
+  if(ad) recordBoardClick(ad);
   try{ if(url) window.open(url, "_blank", "noopener,noreferrer"); }catch(e){}
 }
 function resetBoard(board){
   board.classList.remove("active");
   const cat = board.querySelector(".board-category");
   const days = board.querySelector(".ad-days");
+  const clickCount = board.querySelector(".board-click-count");
   const zone = board.querySelector(".ad-zone");
   const btn = board.querySelector(".claim");
   if(cat) cat.textContent = "";
   if(days) days.textContent = "";
+  if(clickCount) clickCount.textContent = "0";
   if(zone){
     zone.title = "";
     zone.onclick = null;
@@ -2473,6 +2475,8 @@ function setBoardActive(n, ad){
 
   const zone = board.querySelector(".ad-zone");
   const url = adUrl(ad);
+  const clickCount = board.querySelector(".board-click-count");
+  if(clickCount) clickCount.textContent = Number(ad.clicks ?? ad.click_count ?? 0);
   if(zone){
     const oldContent = zone.querySelector(".ad-content");
     if(oldContent) oldContent.remove();
@@ -2506,7 +2510,7 @@ function setBoardActive(n, ad){
     if(plus) plus.style.display = "none";
 
     zone.title = `Open ${displayAdLabel(ad)}`;
-    zone.onclick = () => openDestination(url);
+    zone.onclick = () => openDestination(url, ad);
   }
   const btn = board.querySelector(".claim");
   if(btn){ btn.textContent = "Advertisement Active"; btn.disabled = true; }
@@ -2532,7 +2536,7 @@ function renderCurrentCategory(){
     allAds.sort((a,b) => String(a.category || "").localeCompare(String(b.category || "")) || Number(a.board_number || 0) - Number(b.board_number || 0));
 
     const mainAd = getMainBoard1();
-    if(mainAd) setBoardActive(1, mainAd);
+    if(mainAd){ mainAd.__main_board1 = true; setBoardActive(1, mainAd);}
 
     let visibleBoard = mainAd ? 2 : 1;
     for(const ad of allAds){
@@ -2606,7 +2610,7 @@ function renderAllCategories(){
     card.innerHTML = `<div class="mini-top"><span>BOARD 1</span><span>PERMANENT</span></div>
       ${logo ? `<img class="mini-brand-logo" src="${logo}" alt="" referrerpolicy="no-referrer">` : ""}
       <div class="mini-plus">＋</div><div class="mini-days">${handle || "PERMANENT"}</div>`;
-    card.onclick = () => openDestination(adUrl(mainAd));
+    card.onclick = () => openDestination(adUrl(mainAd), Object.assign({}, mainAd, {__main_board1:true}));
     grid.appendChild(card);
     box.appendChild(mainSection);
   }
@@ -2696,6 +2700,35 @@ function shareOnX(){
   const text = "🚀 Discover AdBoard — a free online advertisement marketplace. Claim your advertisement board and get discovered!";
   window.open("https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(pageUrl), "_blank", "noopener,noreferrer");
 }
+const ADVISITOR_KEY = "adboard_visitor_id";
+function getVisitorId(){
+  try{
+    let id = localStorage.getItem(ADVISITOR_KEY);
+    if(!id){ id = (crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now()+"-"+Math.random()).replace(".",""); localStorage.setItem(ADVISITOR_KEY,id); }
+    return id;
+  }catch(e){ return "anon-"+Date.now()+"-"+Math.random(); }
+}
+async function refreshHomeTraffic(){
+  if(!supabaseClient) return;
+  try{
+    const visitorId = getVisitorId();
+    await supabaseClient.rpc("record_site_visit", {p_visitor_id:visitorId});
+    const {data,error} = await supabaseClient.rpc("get_site_stats");
+    if(error || !data) return;
+    const row = Array.isArray(data) ? data[0] : data;
+    if(row){
+      const visitors = Number(row.total_visitors ?? row.visitors ?? 0);
+      const online = Number(row.online_now ?? row.online ?? 0);
+      const v = document.getElementById("homeVisitors");
+      const o = document.getElementById("homeOnline");
+      if(v) v.textContent = visitors;
+      if(o) o.textContent = online;
+    }
+  }catch(e){ console.warn("AdBoard traffic stats failed",e); }
+}
+refreshHomeTraffic();
+setInterval(refreshHomeTraffic, 60000);
+
 const legalPages = {
   terms: `
     <h1>Terms &amp; Conditions</h1>
@@ -2780,30 +2813,5 @@ function toggleDarkMode(){
 })();
 
 </script>
-
-<script>
-(function(){
-  async function loadHomeStats(){
-    try{
-      if(typeof supabaseClient === "undefined" || !supabaseClient) return;
-      const { data, error } = await supabaseClient
-        .from("ad_stats")
-        .select("clicks,visitors,online")
-        .limit(1)
-        .maybeSingle();
-      if(error || !data) return;
-      document.getElementById("homeClicks").textContent = Number(data.clicks || 0);
-      document.getElementById("homeVisitors").textContent = Number(data.visitors || 0);
-      document.getElementById("homeOnline").textContent = Number(data.online || 0);
-    }catch(e){}
-  }
-  if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", loadHomeStats);
-  }else{
-    loadHomeStats();
-  }
-})();
-</script>
-
 </body>
 </html>
